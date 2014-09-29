@@ -1,43 +1,51 @@
 /**
  * JsonRpc Adapter (using ajax)
- * @static 
+ * 
+ * @static
  */
 WireIt.WiringEditor.adapters.JsonRpc = {
-	
-	config: {
-		url: '../../backend/php/WiringEditor.php'
+
+	/* festradasolano modified this code: */
+	config : {
+		url : location.protocol + "//" + location.host
+				+ "/mashment-backend/wireit-adapter-jsonrpc"
 	},
-	
-	init: function() {
+	/* end of festradasolano code: */
+
+	init : function() {
 		YAHOO.util.Connect.setDefaultPostHeader('application/json');
 	},
-	
-	saveWiring: function(val, callbacks) {
+
+	saveWiring : function(val, callbacks) {
 		this._sendJsonRpcRequest("saveWiring", val, callbacks);
 	},
-	
-	deleteWiring: function(val, callbacks) {
+
+	deleteWiring : function(val, callbacks) {
 		this._sendJsonRpcRequest("deleteWiring", val, callbacks);
 	},
-	
-	listWirings: function(val, callbacks) {
+
+	listWirings : function(val, callbacks) {
 		this._sendJsonRpcRequest("listWirings", val, callbacks);
 	},
-	
+
 	// private method to send a json-rpc request using ajax
-	_sendJsonRpcRequest: function(method, value, callbacks) {
-		var postData = YAHOO.lang.JSON.stringify({"id":(this._requestId++),"method":method,"params":value,"version":"json-rpc-2.0"});
+	_sendJsonRpcRequest : function(method, value, callbacks) {
+		var postData = YAHOO.lang.JSON.stringify({
+			"id" : (this._requestId++),
+			"method" : method,
+			"params" : value,
+			"version" : "json-rpc-2.0"
+		});
 
 		YAHOO.util.Connect.asyncRequest('POST', this.config.url, {
-			success: function(o) {
-				var s = o.responseText,
-					 r = YAHOO.lang.JSON.parse(s);
-			 	callbacks.success.call(callbacks.scope, r.result);
+			success : function(o) {
+				var s = o.responseText, r = YAHOO.lang.JSON.parse(s);
+				callbacks.success.call(callbacks.scope, r.result);
 			},
-			failure: function() {
+			failure : function() {
 				callbacks.failure.call(callbacks.scope, r);
 			}
-		},postData);
+		}, postData);
 	},
-	_requestId: 1
+	_requestId : 1
 };

@@ -1,177 +1,628 @@
+/**
+ * Copyright (c) 2012-2014, Felipe Estrada-Solano <festradasolano at gmail>
+ * Copyright (c) 2007-2009, Eric Abouaf <eric.abouaf at gmail>
+ * 
+ * License: MIT (see LICENSE for details)
+ */
 
+/* festradasolano modified this code: */
+
+/**
+ * BODY
+ */
+/* body background image */
 body {
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
 	/*font-size: 10px;*/
+	background-image: url("../images/layout/body-background.png");
+	background-repeat: repeat-x;
+	background-color: white !important;
 }
 
+/* yui layout background image */
+#layout-doc .yui-layout-doc {
+	background-color: white;
+	background-image: url("../images/layout/body-background.png");
+	background-repeat: repeat-x;
+}
 
 /**
  * TOP
  */
+/* top background image */
 #top {
 	position: relative;
+	background-color: #061d55;
+	background-image: url("../images/layout/top-background.png");
+	background-repeat: repeat-x;
 }
+
+/* top right message position and color */
 #top .topright {
 	position: absolute;
 	right: 5px;
 	top: 5px;
+	color: white;
 }
 
-#top .logo {
-   /*font-family: cursive;
+/* top right message color for visited link */
+#top .topright a:visited {
+	color: #b9ff24;
+}
+
+/* top logo font and position */
+#top .logo { /*font-family: cursive;
    color:  #3366CC;*/
-   font-size: 30px;
-   font-weight: bold;
-   padding-left: 10px;
-   padding-top: 4px;
+	height: 40px;
+	font-size: 25px;
+	font-weight: bold;
+	padding-left: 10px;
+	padding-top: 8px;
+	color: white;
 }
 
-/* Toolbar */
+/* top left-bottom border image */
+#top .corner-left-bottom {
+	background-image: url("../images/layout/top-corner-left-bottom.png");
+	background-repeat: no-repeat;
+	background-position: left bottom;
+}
+
+/* top right-bottom border image */
+#top .corner-right-bottom {
+	background-image: url("../images/layout/top-corner-right-bottom.png");
+	background-repeat: no-repeat;
+	background-position: right bottom;
+}
+
+/* top yui layout background color */
+#yui-gen1 .yui-layout-bd {
+	border-color: #d8d8db;
+}
+
+/* tool bar position */
 #toolbar {
-   position: absolute;
-   top: 10px;
-   left: 300px;
+	position: absolute;
+	top: 10px;
+	left: 400px;
 }
 
+/* tool bar button margin */
 #toolbar .yui-button {
-   margin: 0px;
+	margin: 0px;
 }
+
+/* tool bar left space and font */
 #toolbar .yui-button button {
-   padding-left: 2em;
-   font-size: 92%;
+	padding-left: 2em;
+	font-size: 92%;
 }
 
+/* tool bar save button image background */
 #WiringEditor-saveButton button {
- background:transparent url(../images/icons/database_save.png) no-repeat scroll 10% 50%;
-
+	background: transparent url(../images/icons/database_save.png) no-repeat
+		scroll 10% 50%;
 }
+
+/* tool bar delete button image background */
 #WiringEditor-deleteButton button {
- background:transparent url(../images/icons/delete.png) no-repeat scroll 10% 50%;
+	background: transparent url(../images/icons/delete.png) no-repeat scroll
+		10% 50%;
 }
 
+/* tool bar new button image background */
 #WiringEditor-newButton button {
- background:transparent url(../images/icons/add.png) no-repeat scroll 10% 50%;
+	background: transparent url(../images/icons/add.png) no-repeat scroll
+		10% 50%;
 }
 
+/* tool bar load button image background */
 #WiringEditor-loadButton button {
- background:transparent url(../images/icons/application_go.png) no-repeat scroll 10% 50%;
+	background: transparent url(../images/icons/application_go.png)
+		no-repeat scroll 10% 50%;
 }
 
+/* tool bar help button image background */
 #WiringEditor-helpButton button {
- background:transparent url(../images/icons/help.png) no-repeat scroll 10% 50%;
+	background: transparent url(../images/icons/help.png) no-repeat scroll
+		10% 50%;
 }
 
-/**
- * savedStatus
- */
+/* indicator for not saved */
 div.savedStatus {
-	color:orange;
-	font-size:27pt;
-	left:650px;
-	position:absolute;
-	top:10px;
+	color: orange;
+	font-size: 27pt;
+	left: 850px;
+	position: absolute;
+	top: 10px;
+	cursor: help;
 }
 
 /**
  * LEFT
  */
- 
+/* left border style */
 #left {
-   
+	border-style: none;
 }
- 
- 
-/**
- * Module list 
- */
- 
+
+/* left resize handler top space */
+#yui-gen3 .yui-resize-handle-r {
+	top: 5px;
+}
+
+/* left resize handler background image */
+#yui-gen3 .yui-resize-handle {
+	background-color: white;
+	background-image: url("../images/layout/body-background.png");
+	background-repeat: repeat-x;
+}
+
+/* left panel title background image and font size */
+#yui-gen3 .yui-layout-hd {
+	border-style: hidden;
+	background-color: #cc0000;
+	background-image: url("../images/layout/left-panel-title-background.png");
+	background-repeat: repeat-y;
+	background-position: left top;
+	font-size: 14px;
+}
+
+/* left panel background image */
+#yui-gen3 .yui-layout-bd {
+	border-style: hidden;
+	background-color: white;
+	background-image: url("../images/layout/panel-background.png");
+	background-repeat: repeat-x;
+	background-position: left bottom;
+}
+
+/* left panel simple module style */
 .WiringEditor-module {
-   cursor: pointer;
-   background-color: #AADDDD;
-   margin: 5px;
-   padding: 2px;
-   font-size: 9pt;
-   -moz-border-radius: 2px;
-   height: 16px;
-   text-align: left;
+	cursor: pointer;
+	background-color: transparent;
+	margin: 5px;
+	padding: 2px;
+	font-size: 9pt;
+	-moz-border-radius: 2px;
+	height: 16px;
+	text-align: left;
+	text-indent: 10px;
+	color: green;
+	background-image: url("../images/layout/module-icon.png");
+	background-repeat: no-repeat;
+	background-position: 5px;
 }
 
+/* left panel over simple module style */
 #left .WiringEditor-module:hover {
-   color: red;
+	color: red;
+	border-style: solid;
+	border-width: 1px;
+	border-color: lime;
 }
 
+/* left panel composed module style */
+#left .ComposedModule {
+	background-color: transparent;
+	font-size: 11pt;
+	-moz-border-radius: 2px;
+	height: 20px;
+	text-indent: 16px;
+	color: #e39300;
+	background-image: url("../images/layout/module-composed-icon.png");
+	background-repeat: no-repeat;
+	background-position: 5px;
+}
+
+/* left panel over composed module style */
+#left .ComposedModule:hover {
+	color: red;
+	border-style: solid;
+	border-width: 1px;
+	border-color: orange;
+}
+
+/* left panel images left margin */
 .WiringEditor-module img {
-   margin-left: 5px;
+	margin-left: 5px;
 }
 
+/* left panel span left margin */
 .WiringEditor-module span {
-   margin-left: 5px;
+	margin-left: 5px;
 }
 
+/* proxy module style */
 #moduleProxy {
-   opacity: 0.8;
-   filter: alpha(opacity = 80);
+	opacity: 0.8;
+	filter: alpha(opacity =         80);
+}
+
+/* left collapsed panel background image */
+#layout-doc .yui-layout-clip-left {
+	background-color: #cc0000;
+	background-image: url("../images/layout/left-panel-close-background.png");
+	background-repeat: repeat-x;
+	background-position: left top;
 }
 
 /**
  * CENTER
  */
-
+/* center layout background image */
 #center {
 	height: 100%;
+	width: 100%;
+	background-color: white;
+	background-image: url("../images/layout/center-background.jpg");
+	background-repeat: repeat-x;
 }
 
+/* center top border image */
+#center .border-top {
+	height: 100%;
+	width: 100%;
+	background-image: url("../images/layout/center-border-top.jpg");
+	background-repeat: repeat-x;
+	background-position: top
+}
+
+/* center top-left border image */
+#center .corner-left-top {
+	height: 100%;
+	width: 100%;
+	background-image: url("../images/layout/center-corner-left-top.jpg");
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+/* center top-right border image */
+#center .corner-right-top {
+	height: 100%;
+	width: 100%;
+	background-image: url("../images/layout/center-corner-right-top.jpg");
+	background-repeat: no-repeat;
+	background-position: right top;
+}
+
+/* center bottom border image */
+#center .border-bottom {
+	height: 100%;
+	width: 100%;
+	background-image: url("../images/layout/center-border-bottom.jpg");
+	background-repeat: repeat-x;
+	background-position: bottom
+}
+
+/* center bottom-left border image */
+#center .corner-left-bottom {
+	height: 100%;
+	width: 100%;
+	background-image: url("../images/layout/center-corner-left-bottom.jpg");
+	background-repeat: no-repeat;
+	background-position: left bottom;
+}
+
+/* center bottom-right border image */
+#center .corner-right-bottom {
+	height: 100%;
+	width: 100%;
+	background-image: url("../images/layout/center-corner-right-bottom.jpg");
+	background-repeat: no-repeat;
+	background-position: right bottom;
+}
+
+/* center left border image */
+#center .border-left {
+	height: 100%;
+	width: 100%;
+	background-image: url("../images/layout/center-border-left.jpg");
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+/* center right border image */
+#center .border-right {
+	height: 100%;
+	width: 100%;
+	background-image: url("../images/layout/center-border-right.jpg");
+	background-repeat: no-repeat;
+	background-position: right top;
+}
+
+/* center designer size */
+#wiring-editor {
+	height: 98%;
+	width: 98%;
+}
+
+/* center designer background image */
+#center .WireIt-Layer {
+	height: 100%;
+	width: 100%;
+	background-color: white;
+	background-image: url("../images/layout/center-background.jpg");
+	background-repeat: repeat-x;
+	top: 8px;
+	left: 8px;
+}
+
+/* center yui layout border style */
+#yui-gen6 .yui-layout-bd {
+	border-style: hidden;
+}
+
+/* center module title background color */
+#center .WireIt-Container-ddhandle {
+	background-color: green;
+}
+
+/* center module border color */
+#center .WireIt-Container .body {
+	border-color: green;
+}
+
+/* center module text color */
+#center .inputEx-List-link {
+	color: green;
+}
 
 /**
  * RIGHT
  */
- 
+/* right resize handler background image */
+#yui-gen8 .yui-resize-handle {
+	background-color: white;
+	background-image: url("../images/layout/body-background.png");
+	background-repeat: repeat-x;
+}
+
+/* right resize handler top space */
+#yui-gen8 .yui-resize-handle-l {
+	top: 5px;
+}
+
+/* right panel title background image */
+#yui-gen8 .yui-layout-hd {
+	border-style: hidden;
+	background-color: #051a54;
+	background-image: url("../images/layout/right-panel-title-background.png");
+	background-repeat: repeat-y;
+	background-position: left top;
+}
+
+/* right panel vertical scroll */
+#yui-gen8 .yui-layout-bd {
+	overflow-y: scroll;
+}
+
+/* right panel title background image */
+#accordionView {
+/* 	width: 295px !important; */
+}
+
+/* right panel properties font size */
 #right #propertiesForm {
-	font-size: 10px;
+	font-size: 12px;
 }
 
+/* right panel properties label width and font size */
+#right #propertiesForm .inputEx-label {
+	width: 70px;
+	font-weight: bold;
+}
+
+/* right panel properties field top space */
+#right #propertiesForm .inputEx-fieldWrapper {
+	padding-top: 5px;
+}
+
+/* right panel properties disable resize text area */
+#right #propertiesForm textarea {
+	resize: none;
+}
+
+/* right panel minimap width */
 #layerMap {
-   width: 80%;
+	width: 80%;
 }
 
+/* right panel minimap position */
 #layerMap canvas.WireIt-LayerMap {
 	position: relative;
 	/*width: 250px; Don't put any width or it breaks the layerMap */
 }
 
-#propertiesForm div.inputEx-Group div.inputEx-label {
-	width: 50px;
+/* right collapsed panel background image */
+#layout-doc .yui-layout-clip-right {
+	background-color: #e6e6e6;
+	background-image: url("../images/layout/right-panel-close-background.png");
+	background-repeat: repeat-x;
+	background-position: left top;
 }
 
+/* right panel yui accordion background image */
+#yui-gen8 .yui-accordion-content {
+	border-style: hidden;
+	background-color: #d7dce5;
+	background-image: url("../images/layout/panel-background.png");
+	background-repeat: repeat-x;
+	background-position: left top;
+}
+
+/* right panel yui accordion title background image */
+#yui-gen8 .yui-accordion-toggle {
+	border-style: hidden;
+	background-color: #e6e6e6;
+	background-image: url("../images/layout/right-toggle-title-background.png");
+	background-repeat: repeat-y;
+	background-position: left top;
+	color: white;
+	font-size: 14px;
+}
+
+/**
+ * BOTTOM
+ */
+/* bottom height */
+#bottom {
+	height: 100%
+}
+
+/* bottom console text style */
+#consoleText {
+	width: 100%;
+	resize: none;
+	border-top-style: solid;
+    border-right-style: hidden;
+    border-bottom-style: hidden;
+    border-left-style: hidden;
+    border-color: #d7dce5;
+	background-color: transparent;
+}
+
+/* bottom console buttons style */
+#bottom button {
+	margin: 0px;
+	padding-left: 2em;
+	padding-right: 5px;
+	font-size: 92%;
+	height: 24px;
+}
+
+/* bottom console buttons background */
+#bottom .consoleButtons {
+	background-image: url("../lib/yui/assets/skins/sam/sprite.png");
+	background-repeat: repeat-x;
+	background-position: left top;
+	height: 24px;
+}
+
+/* bottom console clear button image */
+#console-clearButton {
+	background: transparent url(../images/icons/clear.png) no-repeat
+		scroll 10% 50%;
+}
+
+/* bottom panel title background image */
+#yui-gen11 .yui-layout-hd {
+	border-style: hidden;
+	background-color: #e6e6e6;
+	background-image: url("../images/layout/bottom-panel-title-background.png");
+	background-repeat: repeat-y;
+	background-position: left top;
+	font-size: 14px;
+}
+
+/* bottom collapsed panel background image */
+#layout-doc .yui-layout-clip-bottom {
+	background-color: #e6e6e6;
+	background-image: url("../images/layout/bottom-panel-close-background.png");
+	background-repeat: repeat-y;
+	background-position: left top;
+}
+
+/* bottom panel background image */
+#yui-gen11 .yui-layout-bd {
+	border-style: hidden;
+	background-color: #d7dce5;
+	background-image: url("../images/layout/panel-background.png");
+	background-repeat: repeat-x;
+	background-position: left top;
+}
 
 /**
  * Dialogs
  */
+/* dialog load panel title background image */
+#WiringEditor-loadPanel .hd {
+	background-color: #e6e6e6;
+	background-image: url("../images/layout/bottom-panel-close-background.png");
+	background-repeat: repeat-y;
+	background-position: left top;
+	font-size: 14px;
+	color: white;
+}
+
+/* dialog load panel background image */
+#WiringEditor-loadPanel .bd {
+	border-style: hidden;
+	background-color: #d7dce5;
+	background-image: url("../images/layout/panel-background.png");
+	background-repeat: repeat-x;
+	background-position: left top;
+}
+
+/* dialog alert panel title background image */
+#WiringEditor-alertPanel .hd {
+	background-color: #e6e6e6;
+	background-image: url("../images/layout/bottom-panel-close-background.png");
+	background-repeat: repeat-y;
+	background-position: left top;
+	font-size: 14px;
+	color: white;
+}
+
+/* dialog alert panel background image */
+#WiringEditor-alertPanel .bd {
+	border-style: hidden;
+	background-color: #d7dce5;
+	background-image: url("../images/layout/panel-background.png");
+	background-repeat: repeat-x;
+	background-position: left top;
+}
+
+/* dialog alert panel top-bottom text space */
+#alertPanelBody {
+	padding: 10px 0;
+}
+
+/* dialog load panel list container */
 #loadPanelBody {
-	max-height:300px;
-	overflow-y:scroll;
-	overflow-x:none;
-	text-align:left;
+	max-height: 300px;
+	overflow-y: scroll;
+	overflow-x: none;
+	text-align: left;
+	padding-top: 10px;
 }
 
+/* dialog load panel list */
 #loadPanelBody ul {
-   margin-left: 20px;
+	margin-left: 20px;
 }
 
+/* dialog load panel list element */
 #loadPanelBody ul li {
-	background-color:#FFFFFF;
-	list-style-type:none;
-	margin:2px;
-	padding:2px 10px;
-	-moz-border-radius:7px;
+	background-color: transparent;
+	list-style-type: none;
+	margin: 2px;
+	padding: 5px 10px;
+	-moz-border-radius: 7px;
 	-webkit-border-radius: 7px;
 }
 
+/* dialog load panel over list element */
 #loadPanelBody ul li:hover {
 	background-color: #CCCCFF;
 }
 
-#alertPanelBody {
-	padding: 10px 0;
+/* dialog load panel title background image */
+#helpPanel .hd {
+	background-color: #e6e6e6;
+	background-image: url("../images/layout/bottom-panel-close-background.png");
+	background-repeat: repeat-y;
+	background-position: left top;
+	font-size: 14px;
+	color: white;
+}
+
+/* dialog load panel background image */
+#helpPanel .bd {
+	border-style: hidden;
+	background-color: #d7dce5;
+	background-image: url("../images/layout/panel-background.png");
+	background-repeat: repeat-x;
+	background-position: left top;
 }
