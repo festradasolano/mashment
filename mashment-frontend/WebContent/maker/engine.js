@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2012-2014, Felipe Estrada-Solano <festradasolano at gmail>
- * Copyright (c) 2012,      Oscar Mauricio Caicedo <omcaicedo at gmail>
- * Copyright (c) 2007-2009, Eric Abouaf <eric.abouaf at gmail>
+ * Copyright (c) 2012-2014 Felipe Estrada-Solano <festradasolano at gmail>
+ * Copyright (c) 2012      Oscar Mauricio Caicedo <omcaicedo at gmail>
+ * Copyright (c) 2007-2009 Eric Abouaf <eric.abouaf at gmail>
  * 
- * License: MIT (see LICENSE for details)
+ * Distributed under the MIT License (MIT) (see LICENSE for details)
  */
 
 /**
@@ -11,11 +11,11 @@
  * wiring configurations that contains a set module instances and a set of wires
  * linking them. Each mashment has its own execution environment.
  * 
- * Copyright (c) 2012-2014, Felipe Estrada-Solano <festradasolano at gmail>
- * Copyright (c) 2012,..... Oscar Mauricio Caicedo <omcaicedo at gmail>
- * Copyright (c) 2007-2009, Eric Abouaf <eric.abouaf at gmail>
+ * Copyright (c) 2012-2014 Felipe Estrada-Solano <festradasolano at gmail>
+ * Copyright (c) 2012      Oscar Mauricio Caicedo <omcaicedo at gmail>
+ * Copyright (c) 2007-2009 Eric Abouaf <eric.abouaf at gmail>
  * 
- * License: MIT (see LICENSE for details)
+ * Distributed under the MIT License (MIT) (see LICENSE for details)
  */
 
 /* omcaicedo added this code: */
