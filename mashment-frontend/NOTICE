@@ -1,0 +1,24 @@
+Mashment Front-end
+==================
+Mashment Front-end is written by a number of authors who retain their various
+copyrights. Please check individual source files to find their associated
+copyright holders. The following should be a list of all copyright holders.
+All such code is licensed under the Apache License, Version 2.0.
+
+Copyright 2012-2014 Felipe Estrada-Solano <festradasolano at gmail>
+Copyright 2012      Oscar Mauricio Caicedo <omcaicedo at gmail>
+
+Mashment Front-end includes code from WireIt, which is licensed under the MIT
+License (MIT).
+
+WireIt
+======
+WireIt is distributed under the MIT License (MIT):
+
+Copyright (c) 2007-2009, Eric Abouaf <eric.abouaf at gmail>
+
+Some WireIt source files experimented few modifications to meet some Mashment
+Front-end requirements. Those modifications are caused in each individual
+source file. Unless specified, modified source files keep the MIT License.
+
+See WEB-INF/license.txt for WireIt license details.
