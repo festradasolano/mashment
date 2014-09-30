@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2012-2014, Felipe Estrada-Solano <festradasolano at gmail>
- * Copyright (c) 2012,      Oscar Mauricio Caicedo <omcaicedo at gmail>
+ * Copyright (c) 2012-2014 Felipe Estrada-Solano <festradasolano at gmail>
+ * Copyright (c) 2012      Oscar Mauricio Caicedo <omcaicedo at gmail>
  * 
- * License: MIT (see LICENSE for details)
+ * Distributed under the MIT License (MIT) (see LICENSE for details)
  */
 
 package net.mashment.wireit.adapter;
@@ -29,10 +29,13 @@ import org.codehaus.jettison.json.JSONObject;
  * Back-end of the WireIt's JSON RPC adapter to connect to the MySQL database to
  * save, delete, and get mashments.
  * 
- * Copyright (c) 2012-2014, Felipe Estrada-Solano <festradasolano at gmail>
- * Copyright (c) 2012,..... Oscar Mauricio Caicedo <omcaicedo at gmail>
+ * Copyright (c) 2012-2014 Felipe Estrada-Solano <festradasolano at gmail>
+ * Copyright (c) 2012      Oscar Mauricio Caicedo <omcaicedo at gmail>
  * 
- * License: MIT (see LICENSE for details)
+ * Distributed under the MIT License (MIT) (see LICENSE for details)
+ * 
+ * @author festradasolano
+ * @author omcaicedo
  */
 public class JsonRpc extends HttpServlet {
 
@@ -217,6 +220,7 @@ public class JsonRpc extends HttpServlet {
 	 */
 	private void saveMashment(String language, String name, String working)
 			throws SQLException {
+		// execute SQL query
 		Connection con = this.connect();
 		Statement stmt = con.createStatement();
 		ResultSet existCheck = stmt
@@ -244,6 +248,7 @@ public class JsonRpc extends HttpServlet {
 	 */
 	private void deleteMashment(String language, String name)
 			throws SQLException {
+		// execute SQL query
 		Connection con = this.connect();
 		Statement stmt = con.createStatement();
 		stmt.executeUpdate("DELETE from wirings WHERE name = \'" + name
