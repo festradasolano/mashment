@@ -1,7 +1,6 @@
 /*
  * Copyright 2012-2014 Felipe Estrada-Solano <festradasolano at gmail>
  * Copyright 2012      Oscar Mauricio Caicedo <omcaicedo at gmail>
- * Originally created by Eric Abouaf, distributed under the MIT License
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
