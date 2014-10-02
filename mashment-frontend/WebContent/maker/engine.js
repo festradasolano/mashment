@@ -350,7 +350,7 @@ engine.prototype = {
 						params[key] = module.value[key];
 					}
 				}
-				params["type"] = "rrdTool";
+				params["type"] = "rrdtool";
 				// Push on execValues
 				this.execValues[moduleId] = {
 					out : params
@@ -372,12 +372,8 @@ engine.prototype = {
 				}
 				// Obtain NOS input params
 				var nos = params["nos"];
-				this.execValues[moduleId] = {
-					out : output
-				};
 				var nosParams = YAHOO.lang.JSON.stringify(nos);
 				// Execute module
-				this.executeModules(moduleId, "out");
 				window.open(home + "monitorController.jsp?params="
 						+ YAHOO.lang.JSON.stringify(nosParams));
 			} else if (t == "Monitor SDN") {
@@ -397,14 +393,10 @@ engine.prototype = {
 				var nos1 = params["nos1"];
 				var nos2 = params["nos2"];
 				var nos3 = params["nos3"];
-				this.execValues[moduleId] = {
-					out : output
-				};
 				var nosParams = "[" + YAHOO.lang.JSON.stringify(nos1) + ","
 						+ YAHOO.lang.JSON.stringify(nos2) + ","
 						+ YAHOO.lang.JSON.stringify(nos3) + "]";
 				// Execute module
-				this.executeModules(moduleId, "out");
 				window.open(home + "monitorSdn.jsp?params="
 						+ YAHOO.lang.JSON.stringify(nosParams));
 			} else if (t == "Monitoring Panel") {
@@ -425,15 +417,11 @@ engine.prototype = {
 				var nos2 = params["nos2"];
 				var nos3 = params["nos3"];
 				var graphTool = params["graphTool"];
-				this.execValues[moduleId] = {
-					out : output
-				};
 				var nosParams = "[" + YAHOO.lang.JSON.stringify(nos1) + ","
 						+ YAHOO.lang.JSON.stringify(nos2) + ","
 						+ YAHOO.lang.JSON.stringify(nos3) + "]";
 				var graphParams = YAHOO.lang.JSON.stringify(graphTool);
 				// Execute module
-				this.executeModules(moduleId, "out");
 				window.open(home + "monitorPanel.jsp?params="
 						+ YAHOO.lang.JSON.stringify(nosParams) + "&gtparams="
 						+ YAHOO.lang.JSON.stringify(graphParams));
@@ -455,15 +443,11 @@ engine.prototype = {
 				var nos2 = params["nos2"];
 				var nos3 = params["nos3"];
 				var graphTool = params["graphTool"];
-				this.execValues[moduleId] = {
-					out : output
-				};
 				var nosParams = "[" + YAHOO.lang.JSON.stringify(nos1) + ","
 						+ YAHOO.lang.JSON.stringify(nos2) + ","
 						+ YAHOO.lang.JSON.stringify(nos3) + "]";
 				var graphParams = YAHOO.lang.JSON.stringify(graphTool);
 				// Execute module
-				this.executeModules(moduleId, "out");
 				window.open(home + "monitorOF.jsp?params="
 						+ YAHOO.lang.JSON.stringify(nosParams) + "&gtparams="
 						+ YAHOO.lang.JSON.stringify(graphParams));

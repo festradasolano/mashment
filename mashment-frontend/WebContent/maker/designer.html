@@ -183,7 +183,6 @@ div.ComposedModule {
 	}
 
 	function resizeConsoleText() {
-		console.log("HP vida");
 		// get div bottom height
 		var bottomDiv = document.getElementById("bottom");
 		var bottomHeight = bottomDiv.clientHeight;
@@ -194,13 +193,11 @@ div.ComposedModule {
 	}
 
 	function resizeAccordion() {
-		console.log("2 HP vida");
 		// get div right width
 		var rightDiv = document.getElementById("right");
 		var rightWidth = rightDiv.clientWidth;
 		// set accordion width
 		var accordionWidth = rightWidth - 5;
-		console.log(accordionWidth)
 		var accordion = document.getElementById("accordionView");
 		accordion.style.width = accordionWidth + "px";
 		// set accordion toggles width
