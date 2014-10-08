@@ -1,5 +1,4 @@
 <%@page import="util.NosClient"%>
-<%@page import="core.WebServiceClient"%>
 <%@page
 	import="util.NosBeaconClient,util.NosPoxClient,util.NosFloodlightClient,org.codehaus.jettison.json.JSONArray,org.codehaus.jettison.json.JSONObject"%>
 <%

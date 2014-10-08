@@ -15,6 +15,10 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 
+	<session-config>
+		<session-timeout>10</session-timeout>
+	</session-config>
+
 	<!-- Back-end of JSON RPC adapter for database -->
 	<servlet>
 		<display-name>wireit-adapter-jsonrpc</display-name>
@@ -27,19 +31,15 @@
 		<url-pattern>/wireit-adapter-jsonrpc</url-pattern>
 	</servlet-mapping>
 
-	<!-- Drools???? -->
-<!-- 	<context-param> -->
-<!-- 		<param-name>contextConfigLocation</param-name> -->
-<!-- 		<param-value>classpath:beans.xml</param-value> -->
-<!-- 	</context-param> -->
+	<!-- Spring framework for Drools -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:beans.xml</param-value>
+	</context-param>
 
-<!-- 	<listener> -->
-<!-- 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> -->
-<!-- 	</listener> -->
-
-	<session-config>
-		<session-timeout>10</session-timeout>
-	</session-config>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
 
 	<!-- The CORS filter with parameters -->
 	<filter>
