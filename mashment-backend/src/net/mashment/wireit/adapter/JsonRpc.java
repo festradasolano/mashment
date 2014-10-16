@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2012-2014 Felipe Estrada-Solano <festradasolano at gmail>
  * Copyright 2012      Oscar Mauricio Caicedo <omcaicedo at gmail>
  * 

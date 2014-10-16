@@ -15,10 +15,6 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 
-	<session-config>
-		<session-timeout>10</session-timeout>
-	</session-config>
-
 	<!-- Back-end of JSON RPC adapter for database -->
 	<servlet>
 		<display-name>wireit-adapter-jsonrpc</display-name>
@@ -40,6 +36,10 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+
+	<session-config>
+		<session-timeout>10</session-timeout>
+	</session-config>
 
 	<!-- The CORS filter with parameters -->
 	<filter>
