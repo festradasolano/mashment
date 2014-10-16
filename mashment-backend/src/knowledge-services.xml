@@ -14,12 +14,6 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                           http://drools.org/schema/kie-spring http://drools.org/schema/kie-spring.xsd">
 
-	<kie:kmodule id="drools-automatic-nmsit-recognizer">
-		<kie:kbase name="kiebase" packages="net.mashment.drools.rules">
-			<kie:ksession name="kiesession" />
-		</kie:kbase>
-	</kie:kmodule>
-
 	<bean id="kiePostProcessor" class="org.kie.spring.KModuleBeanFactoryPostProcessor" />
 
 </beans>

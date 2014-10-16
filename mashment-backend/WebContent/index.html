@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Rule Creator</title>
+<script type="text/javascript">
+	// XML HTTP request
+	var AJAXrequest = createXMLHttpRequest();
+
+	var EAC_PREFIX = "eac-";
+
+	var AC_PREFIX = "ac-";
+
+	// Creates a XML HTTP request
+	function createXMLHttpRequest() {
+		// See http://en.wikipedia.org/wiki/XMLHttpRequest
+		// Provide the XMLHttpRequest class for IE 5.x-6.x:
+		if (typeof XMLHttpRequest == "undefined")
+			XMLHttpRequest = function() {
+				try {
+					return new ActiveXObject("Msxml2.XMLHTTP.6.0");
+				} catch (e) {
+				}
+				try {
+					return new ActiveXObject("Msxml2.XMLHTTP.3.0");
+				} catch (e) {
+				}
+				try {
+					return new ActiveXObject("Msxml2.XMLHTTP");
+				} catch (e) {
+				}
+				try {
+					return new ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e) {
+				}
+				throw new Error("This browser does not support XMLHttpRequest.");
+			};
+		return new XMLHttpRequest();
+	}
+
+	// Handles AJAX request sent on adding nmsit
+	function handlerAddNmsit() {
+		// AJAX request status? finished and OK : finished and non-OK
+		if (AJAXrequest.readyState == 4 && AJAXrequest.status == 200) {
+			// Obtain AJAX request response text
+			var daoResponse = eval("(" + AJAXrequest.responseText + ")");
+
+			if (daoResponse.error != "NULL") {
+				alert("ERROR: " + daoResponse.error);
+			} else {
+				alert("The rule was succesfully added! :D");
+				// 				document.getElementById("situation").value = "";
+				// 				document.getElementById("rule").value = "";
+				loadRules();
+			}
+		} else if (AJAXrequest.readyState == 4 && AJAXrequest.status != 200) {
+			// Error
+			alert("ERROR: Something went wrong...");
+		}
+	}
+</script>
+<script type="text/javascript">
+	function init() {
+		// 		init eac
+		addEac();
+		document.getElementById("btnRmvEac").disabled = true;
+	}
+
+	function addEac() {
+		// get table of all eacs and check number of eacs
+		var tableAllEac = document.getElementById("tableAllEac");
+		var numberOfEacs = tableAllEac.getElementsByClassName("inputEntity").length;
+		var idEac = EAC_PREFIX + numberOfEacs;
+		// create row eac
+		var trEac = document.createElement("tr");
+		tableAllEac.appendChild(trEac);
+		// create cell eac
+		var tdEac = document.createElement("td");
+		trEac.appendChild(tdEac);
+		// create table eac
+		var tableEac = document.createElement("table");
+		tableEac.setAttribute("cellspacing", 10);
+		tdEac.appendChild(tableEac);
+		// create tbody eac
+		var tbodyEac = document.createElement("tbody");
+		tableEac.appendChild(tbodyEac);
+		// create row entity
+		var trEntity = document.createElement("tr");
+		tbodyEac.appendChild(trEntity);
+		// create cell label entity
+		var tdEntityLabel = document.createElement("td");
+		trEntity.appendChild(tdEntityLabel);
+		// create label entity
+		var labelEntity = document.createElement("label");
+		labelEntity.innerHTML = (numberOfEacs + 1) + ". Entity:";
+		tdEntityLabel.appendChild(labelEntity);
+		// create cell input and buttons for entity
+		var tdEntityInputAndButtons = document.createElement("td");
+		trEntity.appendChild(tdEntityInputAndButtons);
+		// create input entity
+		var inputEntity = document.createElement("input");
+		inputEntity.type = "text";
+		inputEntity.id = idEac;
+		inputEntity.setAttribute("class", "inputEntity");
+		tdEntityInputAndButtons.appendChild(inputEntity);
+		// create button add ac to entity
+		var buttonAddAc = document.createElement("button");
+		buttonAddAc.type = "button";
+		buttonAddAc.value = idEac;
+		buttonAddAc.addEventListener("click", onAddAc, true);
+		buttonAddAc.appendChild(document.createTextNode("Add AC"));
+		tdEntityInputAndButtons.appendChild(buttonAddAc);
+		// create button remove ac from entity
+		var buttonRemoveAc = document.createElement("button");
+		buttonRemoveAc.type = "button";
+		buttonRemoveAc.value = idEac;
+		buttonRemoveAc.disabled = true;
+		buttonRemoveAc.id = "btnRmvAc-" + idEac;
+		buttonRemoveAc.addEventListener("click", onRemoveAc, true);
+		buttonRemoveAc.appendChild(document.createTextNode("Remove Last AC"));
+		tdEntityInputAndButtons.appendChild(buttonRemoveAc);
+		// create row ac
+		var trAc = document.createElement("tr");
+		tbodyEac.appendChild(trAc);
+		// create cell empty ac
+		var tdAcLabel = document.createElement("td");
+		trAc.appendChild(tdAcLabel);
+		// create cell ac
+		var tdAc = document.createElement("td");
+		trAc.appendChild(tdAc);
+		// create table ac
+		var tableAc = document.createElement("table");
+		tableAc.setAttribute("cellspacing", 10);
+		tableAc.id = "tableAc-" + idEac;
+		tdAc.appendChild(tableAc);
+		// add ac
+		addAc(idEac);
+	}
+
+	function addAc(idEac) {
+		// get table from specified eac and check number of acs
+		var tableAc = document.getElementById("tableAc-" + idEac);
+		var numberOfAcs = tableAc.getElementsByClassName("inputAttr").length;
+		var idAc = idEac + AC_PREFIX + numberOfAcs;
+		// create row ac
+		var trAc = document.createElement("tr");
+		tableAc.appendChild(trAc);
+		// create cell ac
+		var tdAc = document.createElement("td");
+		trAc.appendChild(tdAc);
+		// create label attribute
+		var labelAttr = document.createElement("label");
+		labelAttr.innerHTML = (numberOfAcs + 1) + ". Attribute:&nbsp;";
+		tdAc.appendChild(labelAttr);
+		// create input attribute
+		var inputAttr = document.createElement("input");
+		inputAttr.type = "text";
+		inputAttr.id = "attr-" + idAc;
+		inputAttr.setAttribute("class", "inputAttr");
+		tdAc.appendChild(inputAttr);
+		// create label constraint
+		var labelCons = document.createElement("label");
+		labelCons.innerHTML = "&nbsp;&nbsp;-&nbsp;&nbsp;Constraint:&nbsp;";
+		tdAc.appendChild(labelCons);
+		// create input constraint
+		var inputCons = document.createElement("input");
+		inputCons.type = "text";
+		inputCons.id = "cons-" + idAc;
+		tdAc.appendChild(inputCons);
+	}
+
+	function onAddNmsit() {
+		// get situation; if empty, alert
+		var situation = document.getElementById("situation").value.trim();
+		if (situation == "") {
+			alert("ERROR: Field 'Situation' is empty!");
+			return;
+		}
+		// build eac; if null, do nothing
+		var eac = buildEacArray();
+		if (eac == null) {
+			return;
+		}
+		// build nmsit
+		var nmsit = {
+			"SITUATION" : situation,
+			"EAC" : eac
+		};
+		// build params
+		var params = {
+			"method" : "addNmsit",
+			"nmsit" : nmsit
+		}
+
+		// 		AJAXrequest.open("GET",
+		// 				"nmsitDao.jsp?params=" + JSON.stringify(params), true);
+		// 		AJAXrequest.onreadystatechange = handlerAddNmsit;
+		// 		AJAXrequest.send();
+	}
+
+	function buildEacArray() {
+		var eacArray = [];
+		// get number of eacs
+		var numberOfEacs = document.getElementById("tableAllEac")
+				.getElementsByClassName("inputEntity").length;
+		// walk through entities by id
+		for (var i = 0; i < numberOfEacs; i++) {
+			var idEac = EAC_PREFIX + i;
+			var entity = document.getElementById(idEac);
+			// if entity value is empty, alert
+			if (entity.value.trim() == "") {
+				alert("ERROR: Field 'Entity' " + (i + 1) + " is empty!");
+				return null;
+			}
+			var acArray = []
+			// get number of acs from this eac
+			var numberOfAcs = document.getElementById("tableAc-" + idEac)
+					.getElementsByClassName("inputAttr").length;
+			// walk through attributes and constraints from specified eac by id
+			for (var j = 0; j < numberOfAcs; j++) {
+				var idAc = idEac + AC_PREFIX + j;
+				var attr = document.getElementById("attr-" + idAc);
+				var cons = document.getElementById("cons-" + idAc);
+				// if attribute or constraint value is empty, alert
+				if (attr.value.trim() == "" || cons.value.trim() == "") {
+					alert("ERROR: Field 'Attribute' or 'Constraint' " + (j + 1)
+							+ " from 'Entity' " + (i + 1) + " is empty!");
+					return null;
+				}
+				// build ac and push to the array
+				var ac = {
+					"ATTRIBUTE" : attr.value.trim(),
+					"CONSTRAINT" : cons.value.trim()
+				}
+				acArray.push(ac);
+			}
+			// build eac and push to the array
+			var eac = {
+				"ENTITY" : entity.value.trim(),
+				"PROPERTY" : acArray
+			}
+			eacArray.push(eac);
+		}
+		return eacArray;
+	}
+
+	function loadRules() {
+		// ask to load rules
+	}
+
+	function onAddEac() {
+		// add eac
+		addEac();
+		// enable button that removes eac
+		document.getElementById("btnRmvEac").disabled = false;
+	}
+
+	function onRemoveEac() {
+		// remove last eac from table of all eacs
+		var tableAllEac = document.getElementById("tableAllEac");
+		tableAllEac.removeChild(tableAllEac.lastChild);
+		// if number of eacs is less than 2, disable button that removes eac
+		if (tableAllEac.getElementsByClassName("inputEntity").length < 2) {
+			document.getElementById("btnRmvEac").disabled = true;
+		}
+	}
+
+	function onAddAc(event) {
+		// get eac id from button event
+		var idEac = event.srcElement.value;
+		// add ac to specified eac
+		addAc(idEac);
+		// enable button that removes ac from specified eac
+		document.getElementById("btnRmvAc-" + idEac).disabled = false;
+	}
+
+	function onRemoveAc(event) {
+		// get eac id from button event
+		var idEac = event.srcElement.value;
+		// remove last ac from specified eac table
+		var tableAc = document.getElementById("tableAc-" + idEac);
+		tableAc.removeChild(tableAc.lastChild);
+		// if number of acs in eac is less than 2, disable button that removes ac
+		if (tableAc.getElementsByClassName("inputAttr").length < 2) {
+			document.getElementById("btnRmvAc-" + idEac).disabled = true;
+		}
+	}
+</script>
+</head>
+<body style="font-family: Arial; border: 0 none;" onload="init();">
+	<table cellspacing="10">
+		<!-- Situation row -->
+		<tr>
+			<td><label>Situation:</label></td>
+			<td><input id="situation" type="text" />
+				<button type="button" id="btnAddEac" onclick="onAddEac()">Add
+					EAC</button>
+				<button type="button" id="btnRmvEac" onclick="onRemoveEac()">Remove
+					Last EAC</button></td>
+		</tr>
+		<!-- EAC row -->
+		<tr>
+			<td></td>
+			<td>
+				<!-- Table for all EACs -->
+				<table id="tableAllEac" cellspacing="10">
+				</table>
+			</td>
+		</tr>
+		<!-- Buttons to access database -->
+		<tr>
+			<td><button type="button" onclick="onAddNmsit()">Add
+					NMSIT</button></td>
+		</tr>
+	</table>
+</body>
+</html>
