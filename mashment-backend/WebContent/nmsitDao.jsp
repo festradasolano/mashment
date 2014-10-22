@@ -1,5 +1,6 @@
 <%@page import="org.codehaus.jettison.json.JSONObject"%>
 <%@ page import="net.mashment.drools.NmsitDao"%>
+<%@ page import="net.mashment.drools.rules.RuleLoader"%>
 
 <%
 	// Get parameters
@@ -10,15 +11,15 @@
 	if (method.equalsIgnoreCase("addNmsit")) {
 		// if nmsit exists by situation, return error
 		JSONObject checkNmsit = NmsitDao.loadNmsit(nmsit
-				.getString("situation"));
+				.getString("SITUATION"));
 		if (checkNmsit != null) {
 			daoResponse.put("result", false);
 			daoResponse.put("error",
 					"Field 'Situation' is duplicated. Type other!");
 		} else {
 			// build rule
-			String rule = "rule";
-			//
+			String rule = RuleLoader.buildRule(nmsit);
+			// insert in database
 			boolean insertResponse = NmsitDao.addNmsit(
 					nmsit.getString("SITUATION"),
 					nmsit.toString(), rule);

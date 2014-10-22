@@ -13,6 +13,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import net.mashment.drools.NmsitDao;
+import net.mashment.drools.Sensor;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -33,7 +34,7 @@ public class RuleLoader implements ServletContextListener, Runnable {
 
 	private KieSession kieSession;
 
-	// private ScheduledExecutorService scheduler;
+//	private ScheduledExecutorService scheduler;
 
 	/*
 	 * (non-Javadoc)
@@ -49,10 +50,10 @@ public class RuleLoader implements ServletContextListener, Runnable {
 		}
 
 		// Check if an scheduler exists
-		// if (scheduler != null) {
-		// // Shutdown the scheduler
-		// scheduler.shutdown();
-		// }
+//		if (scheduler != null) {
+//			// Shutdown the scheduler
+//			scheduler.shutdown();
+//		}
 	}
 
 	/*
@@ -65,13 +66,13 @@ public class RuleLoader implements ServletContextListener, Runnable {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 
-		// Thread loader = new Thread(this);
-		// loader.start();
+//		Thread loader = new Thread(this);
+//		loader.start();
 
 		// CREATE AN SCHEDULER
-		// scheduler = Executors.newSingleThreadScheduledExecutor();
-		// scheduler.scheduleAtFixedRate(new Sensor(kieSession), 10, 10,
-		// TimeUnit.SECONDS);
+//		scheduler = Executors.newSingleThreadScheduledExecutor();
+//		scheduler.scheduleAtFixedRate(new Sensor(kieSession), 10, 10,
+//				TimeUnit.SECONDS);
 	}
 
 	/**
@@ -89,8 +90,8 @@ public class RuleLoader implements ServletContextListener, Runnable {
 	 * @return
 	 */
 	private static String getRulePath(String filename) {
-		final String[] DIRS_TO_RULE_DIR = { "src", "main",
-				"resources", "net", "mashment", "drools", "rules" };
+		final String[] DIRS_TO_RULE_DIR = { "src", "main", "resources", "net",
+				"mashment", "drools", "rules" };
 		// build path to rule directory
 		StringBuilder ruleDirPath = new StringBuilder();
 		for (String dir : DIRS_TO_RULE_DIR) {
@@ -99,24 +100,75 @@ public class RuleLoader implements ServletContextListener, Runnable {
 		return ruleDirPath.toString() + filename;
 	}
 
-	public static String buildRuleFromEac(String _nmsit) {
-		// get eac
-		JSONObject nmsit = null;
+	/**
+	 * @param _nmsit
+	 * @return
+	 */
+	public static String buildRule(JSONObject nmsit) {
 		try {
-			nmsit = new JSONObject(_nmsit);
+			// declare constants
+			final String RULE_PACKAGE = "net.mashment.drools.rules";
+			final String ENTITY_PACKAGE = "net.mashment.drools.entities";
+			final String KEY_SITUATION = "SITUATION";
+			final String KEY_EAC = "EAC";
+			final String KEY_ENTITY = "ENTITY";
+			final String KEY_PROPERTY = "PROPERTY";
+			final String KEY_ATTRIBUTE = "ATTRIBUTE";
+			final String KEY_CONSTRAINT = "CONSTRAINT";
+			// get rule parameters
+			String situation = nmsit.getString(KEY_SITUATION);
+			JSONArray eacArray = nmsit.getJSONArray(KEY_EAC);
+			// build rule
+			StringBuilder rule = new StringBuilder();
+			// add rule's package: default
+			rule.append("package ").append(RULE_PACKAGE).append(" \n");
+			rule.append("\n");
+			// add rule's imports: entities (default package)
+			for (int i = 0; i < eacArray.length(); i++) {
+				// entities
+				JSONObject eac = eacArray.getJSONObject(i);
+				rule.append("import ").append(ENTITY_PACKAGE).append(".")
+						.append(eac.getString(KEY_ENTITY)).append(" \n");
+			}
+			rule.append("\n");
+			// add rule's name: situation
+			rule.append("rule \"").append(situation).append("\" \n");
+			// add rule's when: entities, attributes and constraints
+			rule.append("    when \n");
+			for (int i = 0; i < eacArray.length(); i++) {
+				// entities
+				JSONObject eac = eacArray.getJSONObject(i);
+				rule.append("        ").append(eac.getString(KEY_ENTITY))
+						.append("(");
+				// attributes and constraints
+				JSONArray propertyArray = eac.getJSONArray(KEY_PROPERTY);
+				for (int j = 0; j < propertyArray.length(); j++) {
+					if (j > 0) {
+						rule.append(", ");
+					}
+					JSONObject property = propertyArray.getJSONObject(j);
+					rule.append(property.getString(KEY_ATTRIBUTE)).append(" ")
+							.append(property.get(KEY_CONSTRAINT));
+				}
+				rule.append(") \n");
+			}
+			// FIXME add rule's then: printing
+			rule.append("    then \n");
+			rule.append("        System.out.println(\"Detected situation ")
+					.append(situation).append("\"); \n");
+			// add rule's end
+			rule.append("end \n");
+			System.out.println(rule.toString());
+			return rule.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();
-			return null;
 		}
-		// declare constants
-		final String PACKAGE = "net.mashment.drools.rules";
-		// build rule
-		StringBuilder rule = new StringBuilder();
-		rule.append("package ").append(PACKAGE).append(" \n");
-		rule.append("\n");
-		
 
 		return null;
+	}
+	
+	public void loadRule() {
+		// TODO
 	}
 
 	/*

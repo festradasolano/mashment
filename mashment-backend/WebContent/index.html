@@ -44,14 +44,28 @@
 		if (AJAXrequest.readyState == 4 && AJAXrequest.status == 200) {
 			// Obtain AJAX request response text
 			var daoResponse = eval("(" + AJAXrequest.responseText + ")");
-
 			if (daoResponse.error != "NULL") {
 				alert("ERROR: " + daoResponse.error);
 			} else {
 				alert("The rule was succesfully added! :D");
-				// 				document.getElementById("situation").value = "";
-				// 				document.getElementById("rule").value = "";
+				cleanFields();
 				loadRules();
+			}
+		} else if (AJAXrequest.readyState == 4 && AJAXrequest.status != 200) {
+			// Error
+			alert("ERROR: Something went wrong...");
+		}
+	}
+	
+	function handlerLoadRules() {
+		// AJAX request status? finished and OK : finished and non-OK
+		if (AJAXrequest.readyState == 4 && AJAXrequest.status == 200) {
+			// Obtain AJAX request response text
+			var daoResponse = eval("(" + AJAXrequest.responseText + ")");
+			if (daoResponse.error != "NULL") {
+				alert("ERROR: " + daoResponse.error);
+			} else {
+				alert("Rules succesfully loaded! :D");
 			}
 		} else if (AJAXrequest.readyState == 4 && AJAXrequest.status != 200) {
 			// Error
@@ -166,36 +180,8 @@
 		var inputCons = document.createElement("input");
 		inputCons.type = "text";
 		inputCons.id = "cons-" + idAc;
+		inputCons.setAttribute("class", "inputCons");
 		tdAc.appendChild(inputCons);
-	}
-
-	function onAddNmsit() {
-		// get situation; if empty, alert
-		var situation = document.getElementById("situation").value.trim();
-		if (situation == "") {
-			alert("ERROR: Field 'Situation' is empty!");
-			return;
-		}
-		// build eac; if null, do nothing
-		var eac = buildEacArray();
-		if (eac == null) {
-			return;
-		}
-		// build nmsit
-		var nmsit = {
-			"SITUATION" : situation,
-			"EAC" : eac
-		};
-		// build params
-		var params = {
-			"method" : "addNmsit",
-			"nmsit" : nmsit
-		}
-
-		// 		AJAXrequest.open("GET",
-		// 				"nmsitDao.jsp?params=" + JSON.stringify(params), true);
-		// 		AJAXrequest.onreadystatechange = handlerAddNmsit;
-		// 		AJAXrequest.send();
 	}
 
 	function buildEacArray() {
@@ -243,26 +229,33 @@
 		}
 		return eacArray;
 	}
+	
+	function cleanFields() {
+		var situation = document.getElementById("situation").value = "";
+		var entities = document.getElementsByClassName("inputEntity");
+		for (var i = 0; i < entities.length; i++) {
+			entities[i].value = "";
+		}
+		var attributes = document.getElementsByClassName("inputAttr");
+		for (var i = 0; i < attributes.length; i++) {
+			attributes[i].value = "";
+		}
+		var constraints = document.getElementsByClassName("inputCons");
+		for (var i = 0; i < constraints.length; i++) {
+			constraints[i].value = "";
+		}
+	}
 
 	function loadRules() {
-		// ask to load rules
-	}
-
-	function onAddEac() {
-		// add eac
-		addEac();
-		// enable button that removes eac
-		document.getElementById("btnRmvEac").disabled = false;
-	}
-
-	function onRemoveEac() {
-		// remove last eac from table of all eacs
-		var tableAllEac = document.getElementById("tableAllEac");
-		tableAllEac.removeChild(tableAllEac.lastChild);
-		// if number of eacs is less than 2, disable button that removes eac
-		if (tableAllEac.getElementsByClassName("inputEntity").length < 2) {
-			document.getElementById("btnRmvEac").disabled = true;
+		// build params
+		var params = {
+			"method" : "loadRules",
 		}
+		// ask to load rules
+// 		AJAXrequest.open("GET",
+// 				"ruleLoader.jsp?params=" + JSON.stringify(params), true);
+// 		AJAXrequest.onreadystatechange = handlerLoadRules;
+// 		AJAXrequest.send();
 	}
 
 	function onAddAc(event) {
@@ -274,6 +267,47 @@
 		document.getElementById("btnRmvAc-" + idEac).disabled = false;
 	}
 
+	function onAddEac() {
+		// add eac
+		addEac();
+		// enable button that removes eac
+		document.getElementById("btnRmvEac").disabled = false;
+	}
+
+	function onAddNmsit() {
+		// get situation; if empty, alert
+		var situation = document.getElementById("situation").value.trim();
+		if (situation == "") {
+			alert("ERROR: Field 'Situation' is empty!");
+			return;
+		}
+		// build eac; if null, do nothing
+		var eac = buildEacArray();
+		if (eac == null) {
+			return;
+		}
+		// build nmsit
+		var nmsit = {
+			"SITUATION" : situation,
+			"EAC" : eac
+		};
+		console.log(JSON.stringify(nmsit))
+		// build params
+		var params = {
+			"method" : "addNmsit",
+			"nmsit" : nmsit
+		}
+		// request nmsitDao
+		AJAXrequest.open("GET",
+				"nmsitDao.jsp?params=" + JSON.stringify(params), true);
+		AJAXrequest.onreadystatechange = handlerAddNmsit;
+		AJAXrequest.send();
+	}
+	
+	function onCleanAll() {
+		cleanFields();
+	}
+
 	function onRemoveAc(event) {
 		// get eac id from button event
 		var idEac = event.srcElement.value;
@@ -283,6 +317,16 @@
 		// if number of acs in eac is less than 2, disable button that removes ac
 		if (tableAc.getElementsByClassName("inputAttr").length < 2) {
 			document.getElementById("btnRmvAc-" + idEac).disabled = true;
+		}
+	}
+	
+	function onRemoveEac() {
+		// remove last eac from table of all eacs
+		var tableAllEac = document.getElementById("tableAllEac");
+		tableAllEac.removeChild(tableAllEac.lastChild);
+		// if number of eacs is less than 2, disable button that removes eac
+		if (tableAllEac.getElementsByClassName("inputEntity").length < 2) {
+			document.getElementById("btnRmvEac").disabled = true;
 		}
 	}
 </script>
@@ -310,7 +354,8 @@
 		<!-- Buttons to access database -->
 		<tr>
 			<td><button type="button" onclick="onAddNmsit()">Add
-					NMSIT</button></td>
+					NMSIT</button>
+				<button type="button" onclick="onCleanAll()">Clean All</button></td>
 		</tr>
 	</table>
 </body>
