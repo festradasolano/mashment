@@ -19,6 +19,7 @@
 		} else {
 			// build rule
 			String rule = RuleLoader.buildRule(nmsit);
+// 			String rule = "";
 			// insert in database
 			boolean insertResponse = NmsitDao.addNmsit(
 					nmsit.getString("SITUATION"),

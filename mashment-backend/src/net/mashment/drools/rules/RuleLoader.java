@@ -3,7 +3,6 @@
  */
 package net.mashment.drools.rules;
 
-import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +14,7 @@ import javax.servlet.annotation.WebListener;
 import net.mashment.drools.NmsitDao;
 import net.mashment.drools.Sensor;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -32,9 +32,9 @@ import org.kie.api.runtime.KieSession;
 @WebListener
 public class RuleLoader implements ServletContextListener, Runnable {
 
-	private KieSession kieSession;
+	public static KieSession kieSession;
 
-//	private ScheduledExecutorService scheduler;
+	private ScheduledExecutorService scheduler;
 
 	/*
 	 * (non-Javadoc)
@@ -45,15 +45,15 @@ public class RuleLoader implements ServletContextListener, Runnable {
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 
-		if (kieSession != null) {
-			kieSession.dispose();
+		if (RuleLoader.kieSession != null) {
+			RuleLoader.kieSession.dispose();
 		}
 
 		// Check if an scheduler exists
-//		if (scheduler != null) {
-//			// Shutdown the scheduler
-//			scheduler.shutdown();
-//		}
+		if (scheduler != null) {
+			// Shutdown the scheduler
+			scheduler.shutdown();
+		}
 	}
 
 	/*
@@ -66,13 +66,13 @@ public class RuleLoader implements ServletContextListener, Runnable {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 
-//		Thread loader = new Thread(this);
-//		loader.start();
+		// Thread loader = new Thread(this);
+		// loader.start();
+		this.loadAllRules();
 
 		// CREATE AN SCHEDULER
-//		scheduler = Executors.newSingleThreadScheduledExecutor();
-//		scheduler.scheduleAtFixedRate(new Sensor(kieSession), 10, 10,
-//				TimeUnit.SECONDS);
+		scheduler = Executors.newSingleThreadScheduledExecutor();
+		scheduler.scheduleAtFixedRate(new Sensor(), 5, 5, TimeUnit.SECONDS);
 	}
 
 	/**
@@ -115,6 +115,7 @@ public class RuleLoader implements ServletContextListener, Runnable {
 			final String KEY_PROPERTY = "PROPERTY";
 			final String KEY_ATTRIBUTE = "ATTRIBUTE";
 			final String KEY_CONSTRAINT = "CONSTRAINT";
+			final String ENTITY_PREFIX = "e";
 			// get rule parameters
 			String situation = nmsit.getString(KEY_SITUATION);
 			JSONArray eacArray = nmsit.getJSONArray(KEY_EAC);
@@ -127,8 +128,9 @@ public class RuleLoader implements ServletContextListener, Runnable {
 			for (int i = 0; i < eacArray.length(); i++) {
 				// entities
 				JSONObject eac = eacArray.getJSONObject(i);
+				String entity = eac.getString(KEY_ENTITY);
 				rule.append("import ").append(ENTITY_PACKAGE).append(".")
-						.append(eac.getString(KEY_ENTITY)).append(" \n");
+						.append(WordUtils.capitalize(entity)).append(" \n");
 			}
 			rule.append("\n");
 			// add rule's name: situation
@@ -136,29 +138,109 @@ public class RuleLoader implements ServletContextListener, Runnable {
 			// add rule's when: entities, attributes and constraints
 			rule.append("    when \n");
 			for (int i = 0; i < eacArray.length(); i++) {
+				boolean firstAttribute = true;
 				// entities
 				JSONObject eac = eacArray.getJSONObject(i);
-				rule.append("        ").append(eac.getString(KEY_ENTITY))
+				String entity = eac.getString(KEY_ENTITY);
+				rule.append("        $").append(ENTITY_PREFIX).append(i)
+						.append(" : ").append(WordUtils.capitalize(entity))
 						.append("(");
+				// check if entity is a constraint in other eac
+				for (int j = 0; j < eacArray.length(); j++) {
+					JSONObject eacCheck = eacArray.getJSONObject(j);
+					String entityAsParam = eacCheck.getString(KEY_ENTITY);
+					JSONArray propertyArrayCheck = eacCheck
+							.getJSONArray(KEY_PROPERTY);
+					for (int k = 0; k < propertyArrayCheck.length(); k++) {
+						JSONObject propertyCheck = propertyArrayCheck
+								.getJSONObject(k);
+						String constraintCheck = propertyCheck
+								.getString(KEY_CONSTRAINT);
+						if (entity.equalsIgnoreCase(constraintCheck)) {
+							// check if first attribute
+							if (!firstAttribute) {
+								rule.append(", ");
+							}
+							rule.append(entityAsParam).append(" == $")
+									.append(ENTITY_PREFIX).append(j);
+							firstAttribute = false;
+						}
+					}
+				}
 				// attributes and constraints
 				JSONArray propertyArray = eac.getJSONArray(KEY_PROPERTY);
 				for (int j = 0; j < propertyArray.length(); j++) {
-					if (j > 0) {
-						rule.append(", ");
-					}
+					// get attribute and constraint
 					JSONObject property = propertyArray.getJSONObject(j);
-					rule.append(property.getString(KEY_ATTRIBUTE)).append(" ")
-							.append(property.get(KEY_CONSTRAINT));
+					String attribute = property.getString(KEY_ATTRIBUTE);
+					String constraint = property.getString(KEY_CONSTRAINT);
+					// check if constraint references an entity
+					boolean isConstraintAnEntity = false;
+					for (int k = 0; k < eacArray.length(); k++) {
+						JSONObject eacCheck = eacArray.getJSONObject(k);
+						String entityCheck = eacCheck.getString(KEY_ENTITY);
+						if (constraint.equalsIgnoreCase(entityCheck)) {
+							isConstraintAnEntity = true;
+							break;
+						}
+					}
+					// if constraint is an entity or all, do not add attribute
+					if (!isConstraintAnEntity
+							&& !constraint.equalsIgnoreCase("all")) {
+						// check if first attribute
+						if (!firstAttribute) {
+							rule.append(", ");
+						}
+						// check if constraint includes operator
+						rule.append(attribute).append(" ");
+						if (!constraint.matches("[<>=!].*")) {
+							// separate or
+							String[] options = constraint.split("or");
+							boolean firstConstraint = true;
+							for (String opt : options) {
+								if (!firstConstraint) {
+									rule.append(" || ");
+								}
+								rule.append("== \"").append(opt.trim())
+										.append("\"");
+								firstConstraint = false;
+							}
+						} else {
+							rule.append(constraint);
+						}
+						firstAttribute = false;
+					}
 				}
 				rule.append(") \n");
 			}
 			// FIXME add rule's then: printing
 			rule.append("    then \n");
+			// rule.append("        System.out.println(\"Detected situation ")
+			// .append(situation).append("\"); \n");
+
 			rule.append("        System.out.println(\"Detected situation ")
-					.append(situation).append("\"); \n");
+					.append(situation)
+					.append(" for \" + $e2.toString() ); \n");
+			// + \" in  \"); \n");
+
 			// add rule's end
 			rule.append("end \n");
 			System.out.println(rule.toString());
+
+			// StringBuilder rule2 = new StringBuilder();
+			// rule2.append("package net.mashment.drools.rules \n");
+			// rule2.append("\n");
+			// rule2.append("import net.mashment.drools.entities.Message; \n");
+			// rule2.append("\n");
+			// rule2.append("rule \"test\" \n");
+			// rule2.append("		salience 50 \n");
+			// rule2.append("    when \n");
+			// rule2.append("        m : Message(status == Message.HELLO, message : message) \n");
+			// rule2.append("    then \n");
+			// rule2.append("        System.out.println(\"Rule added as a new file\"); \n");
+			// rule2.append("end \n");
+			// return rule2.toString();
+
 			return rule.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -166,9 +248,11 @@ public class RuleLoader implements ServletContextListener, Runnable {
 
 		return null;
 	}
-	
-	public void loadRule() {
+
+	public void loadAllRules() {
 		// TODO
+		Thread ruleLoader = new Thread(this);
+		ruleLoader.start();
 	}
 
 	/*
@@ -208,10 +292,12 @@ public class RuleLoader implements ServletContextListener, Runnable {
 		KieContainer kieContainer = kieServices.newKieContainer(kieServices
 				.getRepository().getDefaultReleaseId());
 		// dispose old kie session and save new kie session
-		KieSession kieSessionToDispose = this.kieSession;
-		this.kieSession = kieContainer.newKieSession();
-		kieSessionToDispose.dispose();
-		kieSessionToDispose = null;
+		KieSession kieSessionToDispose = RuleLoader.kieSession;
+		RuleLoader.kieSession = kieContainer.newKieSession();
+		if (kieSessionToDispose != null) {
+			kieSessionToDispose.dispose();
+			kieSessionToDispose = null;
+		}
 	}
 
 }

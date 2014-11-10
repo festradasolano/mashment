@@ -8,8 +8,9 @@
 	String method = params.getString("method");
 	if (method.equalsIgnoreCase("loadRules")) {
 		RuleLoader ruleLoader = new RuleLoader();
-		ruleLoader.loadRule();
+		ruleLoader.loadAllRules();
 	}
+	daoResponse.put("error", "NULL");
 	out.println(daoResponse);
 	out.flush();
 %>

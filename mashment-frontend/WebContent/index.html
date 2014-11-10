@@ -1,28 +1,566 @@
-<!-- 
-	Copyright 2012-2014 Felipe Estrada-Solano <festradasolano at gmail>
-	Copyright 2012      Oscar Mauricio Caicedo <omcaicedo at gmail>
-	
-	Licensed under the Apache License, Version 2.0 (the "License");
-	you may not use this file except in compliance with the License.
-	You may obtain a copy of the License at:
-	
-		http://www.apache.org/licenses/LICENSE-2.0
-	
-	Unless required by applicable law or agreed to in writing, software
-	distributed under the License is distributed on an "AS IS" BASIS,
-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	See the License for the specific language governing permissions and
-	limitations under the License.
--->
-
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
-<META HTTP-EQUIV=Refresh CONTENT="1; URL=/mashment/maker/designer.html">
-<script language="JavaScript">
-	window.location.replace('/mashment/maker/designer.html');
-	self.location = '/mashment/maker/designer.html';
+<head>
+<meta charset="UTF-8">
+<title>Rule Creator</title>
+<style type="text/css">
+td {
+	padding: 5px;
+	padding-left: 20px;
+}
+
+div#divButtons {
+	padding: 20px;
+}
+</style>
+<script type="text/javascript">
+	// XML HTTP request
+	var AJAXrequest = createXMLHttpRequest();
+
+	// 	var EAC_PREFIX = "eac-";
+
+	// 	var AC_PREFIX = "ac-";
+
+	var ENTITY = "entity";
+
+	var ENT_LEV_1 = "e1";
+	
+	var home = location.protocol + '//' + location.host + '/mashment-backend/';
+
+	// Creates a XML HTTP request
+	function createXMLHttpRequest() {
+		// See http://en.wikipedia.org/wiki/XMLHttpRequest
+		// Provide the XMLHttpRequest class for IE 5.x-6.x:
+		if (typeof XMLHttpRequest == "undefined")
+			XMLHttpRequest = function() {
+				try {
+					return new ActiveXObject("Msxml2.XMLHTTP.6.0");
+				} catch (e) {
+				}
+				try {
+					return new ActiveXObject("Msxml2.XMLHTTP.3.0");
+				} catch (e) {
+				}
+				try {
+					return new ActiveXObject("Msxml2.XMLHTTP");
+				} catch (e) {
+				}
+				try {
+					return new ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e) {
+				}
+				throw new Error("This browser does not support XMLHttpRequest.");
+			};
+		return new XMLHttpRequest();
+	}
+
+	// Handles AJAX request sent on adding nmsit
+	function handlerAddNmsit() {
+		// AJAX request status? finished and OK : finished and non-OK
+		if (AJAXrequest.readyState == 4 && AJAXrequest.status == 200) {
+			// Obtain AJAX request response text
+			var daoResponse = eval("(" + AJAXrequest.responseText + ")");
+			if (daoResponse.error != "NULL") {
+				alert("ERROR: " + daoResponse.error);
+			} else {
+				alert("The rule was succesfully added! :D");
+				cleanFields();
+				loadRules();
+			}
+		} else if (AJAXrequest.readyState == 4 && AJAXrequest.status != 200) {
+			// Error
+			alert("ERROR: Something went wrong...");
+		}
+	}
+
+	function handlerLoadRules() {
+		// AJAX request status? finished and OK : finished and non-OK
+		if (AJAXrequest.readyState == 4 && AJAXrequest.status == 200) {
+			// Obtain AJAX request response text
+			var daoResponse = eval("(" + AJAXrequest.responseText + ")");
+			if (daoResponse.error != "NULL") {
+				alert("ERROR: " + daoResponse.error);
+			} else {
+				alert("Rules succesfully loaded! :D");
+			}
+		} else if (AJAXrequest.readyState == 4 && AJAXrequest.status != 200) {
+			// Error
+			alert("ERROR: Something went wrong...");
+		}
+	}
 </script>
-<a href=/mashment/maker/designer.html">Click here</a> if Mashment Maker
-Designer is not loading automatically.
+<script type="text/javascript">
+	function init() {
+		// init eac
+	}
+
+	function cleanFields() {
+		// reload page
+		location.reload();
+	}
+
+	function loadRules() {
+		// build params
+		var params = {
+			"method" : "loadRules",
+		}
+		// ask to load rules
+		AJAXrequest.open("GET", home + "ruleLoader.jsp?params="
+				+ JSON.stringify(params), true);
+		AJAXrequest.onreadystatechange = handlerLoadRules;
+		AJAXrequest.send();
+	}
+
+	function onAddNmsit() {
+		// get situation name
+		var situation = document.getElementById("nmsitName").value;
+		var eacArray = [];
+		// get entities
+		var entities = document.getElementsByClassName(ENTITY);
+		for (var i = 0; i < entities.length; i++) {
+			var acArray = [];
+			// get attributes from entity
+			var attributes = entities[i].getElementsByClassName(entities[i].id
+					+ "-attr");
+			for (var j = 0; j < attributes.length; j++) {
+				// check if attribute is not empty
+				if (attributes[j].value.trim() != "") {
+					// build ac
+					var ac = {
+						"ATTRIBUTE" : attributes[j].id,
+						"CONSTRAINT" : attributes[j].value.trim()
+					}
+					acArray.push(ac);
+				}
+			}
+			// build eac
+			var eac = {
+				"ENTITY" : entities[i].id,
+				"PROPERTY" : acArray
+			}
+			eacArray.push(eac);
+		}
+		// build nmsit
+		var nmsit = {
+			"SITUATION" : situation,
+			"EAC" : eacArray
+		};
+		// build params
+		var params = {
+			"method" : "addNmsit",
+			"nmsit" : nmsit
+		}
+		// request nmsitDao
+		AJAXrequest.open("GET",
+				home + "nmsitDao.jsp?params=" + JSON.stringify(params), true);
+		AJAXrequest.onreadystatechange = handlerAddNmsit;
+		AJAXrequest.send();
+		// prevent page refresh
+		return false;
+	}
+
+	function createDivTableForm(parent, divId, divClass, title) {
+		// create div
+		var div = document.createElement("div");
+		div.style.paddingLeft = "20px";
+		div.id = divId;
+		div.setAttribute("class", divClass);
+		parent.appendChild(div);
+		// create title
+		var h3Title = document.createElement("h3");
+		h3Title.innerHTML = title;
+		div.appendChild(h3Title);
+		// create table
+		var table = document.createElement("table");
+		div.appendChild(table);
+		// return div and table
+		return {
+			"div" : div,
+			"table" : table
+		};
+	}
+
+	function createRowForm(table, labelText) {
+		// create row
+		var row = document.createElement("tr");
+		table.appendChild(row);
+		// create cell for label
+		var cellLabel = document.createElement("td");
+		row.appendChild(cellLabel);
+		// create label
+		var label = document.createElement("label");
+		label.innerHTML = labelText;
+		cellLabel.appendChild(label);
+		// return row
+		return row;
+	}
+
+	function createInputForm(table, labelText, inputId, inputClass,
+			inputPlaceholder) {
+		// create row
+		var row = createRowForm(table, labelText);
+		// create cell for input
+		var cellInput = document.createElement("td");
+		row.appendChild(cellInput);
+		// create input
+		var input = document.createElement("input");
+		input.id = inputId;
+		input.setAttribute("class", inputClass);
+		input.type = "text";
+		input.maxLength = "255";
+		input.size = "50";
+		input.placeholder = inputPlaceholder;
+		cellInput.appendChild(input);
+		return input;
+	}
+
+	function createSelectForm(table, labelText, selectId, selectClass) {
+		// create row
+		var row = createRowForm(table, labelText);
+		// create cell for select
+		var cellSelect = document.createElement("td");
+		row.appendChild(cellSelect);
+		// create select
+		var select = document.createElement("select");
+		select.id = selectId;
+		select.setAttribute("class", selectClass);
+		cellSelect.appendChild(select);
+		// return select
+		return select;
+	}
+
+	function addOptionsToSelect(select, options) {
+		// walk through options
+		for (var i = 0; i < options.length; i++) {
+			// create option
+			var option = document.createElement("option");
+			option.value = options[i].value;
+			option.innerHTML = options[i].text;
+			// default is null
+			if (options[i].value == "null") {
+				option.selected = "selected";
+			}
+			select.appendChild(option);
+		}
+	}
+
+	function removeAllElementChilds(idElement) {
+		// check if element has childs to remove them
+		var element = document.getElementById(idElement);
+		while (element.firstElementChild != null) {
+			element.removeChild(element.firstElementChild);
+		}
+	}
+
+	function onSelectNmsitType(nmsitType) {
+		// remove div childs
+		removeAllElementChilds("divNmsitType");
+		// check selected nmsit type
+		if (nmsitType.value == "openflow") {
+			buildNmsitTypeOpenflow();
+		} else if (nmsitType.value == "nve") {
+			buildNmsitTypeNve();
+			nmsitType.value = "";
+		} else if (nmsitType.value == "traditional") {
+			buildNmsitTypeTraditional();
+			nmsitType.value = "";
+		} else {
+			// do nothing
+		}
+	}
+
+	function buildNmsitTypeOpenflow() {
+		var entityId = "openflowController";
+		var divNmsitType = document.getElementById("divNmsitType");
+		// create div and table for controller
+		var divTable = createDivTableForm(divNmsitType, entityId, ENTITY,
+				"Openflow Controller");
+		var divController = divTable.div;
+		var tableController = divTable.table;
+		// create input controller ip
+		var inputControllerIp = createInputForm(tableController,
+				"Controller IP: *", "ip", entityId + "-attr",
+				"IP addresses separated by 'or'; all");
+		inputControllerIp.required = "required";
+		// 		inputControllerIp.pattern = "[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}|all";
+		// create input controller port
+		var inputControllerPort = createInputForm(tableController,
+				"Controller Port: *", "port", entityId + "-attr",
+				"Port numbers separated by 'or'; or all");
+		inputControllerPort.required = "required";
+		// 		inputControllerPort.pattern = "[0-9]{1,5}|all";
+		// create select controller type
+		var selectControllerType = createSelectForm(tableController,
+				"Controller Type: *", "type", entityId + "-attr");
+		selectControllerType.required = "required";
+		// create options for select controller type
+		var optionsControllerType = [ {
+			"value" : "",
+			"text" : ""
+		}, {
+			"value" : "beacon",
+			"text" : "Beacon"
+		}, {
+			"value" : "pox",
+			"text" : "POX"
+		}, {
+			"value" : "floodlight",
+			"text" : "Floodlight"
+		}, {
+			"value" : "all",
+			"text" : "All"
+		}, {
+			"value" : "beacon or pox",
+			"text" : "Beacon or POX"
+		}, {
+			"value" : "beacon or floodlight",
+			"text" : "Beacon or Floodlight"
+		}, {
+			"value" : "pox or floodlight",
+			"text" : "POX or Floodlight"
+		}, ];
+		addOptionsToSelect(selectControllerType, optionsControllerType);
+		// create select openflow element
+		var selectOFElement = createSelectForm(tableController,
+				"OpenFlow Element: *", "openflowElement", entityId + "-attr");
+		selectOFElement.addEventListener("change", onSelectOFElement, true);
+		selectOFElement.required = "required";
+		// create options for select openflow element
+		var optionsOFElement = [ {
+			"value" : "",
+			"text" : ""
+		}, {
+			"value" : "openflowSwitch",
+			"text" : "Switch"
+		}, {
+			"value" : "openflowLink",
+			"text" : "Link"
+		}, {
+			"value" : "openflowDevice",
+			"text" : "Device"
+		}, {
+			"value" : "all",
+			"text" : "All"
+		}, ];
+		addOptionsToSelect(selectOFElement, optionsOFElement);
+		// create div for openflow element
+		var divOFElement = document.createElement("div");
+		divOFElement.id = "divOFElement";
+		divController.appendChild(divOFElement);
+	}
+
+	function buildNmsitTypeNve() {
+		alert("Function to build a NMSit for Virtualized Network is not implemented yet");
+	}
+
+	function buildNmsitTypeTraditional() {
+		alert("Function to build a NMSit for Traditional Network is not implemented yet");
+	}
+
+	function onSelectOFElement(event) {
+		// remove div childs
+		removeAllElementChilds("divOFElement");
+		// check selected openflow element
+		var openflowElement = event.srcElement.value;
+		if (openflowElement == "openflowSwitch") {
+			buildOFElementSwitch();
+		} else if (openflowElement == "openflowLink") {
+			buildOFElementLink();
+			event.srcElement.value = "";
+		} else if (openflowElement == "openflowDevice") {
+			buildOFElementDevice();
+			event.srcElement.value = "";
+		} else if (openflowElement == "all") {
+			buildOFElementAll();
+			event.srcElement.value = "";
+		} else {
+			// do nothing
+		}
+	}
+
+	function buildOFElementSwitch() {
+		var entityId = "openflowSwitch";
+		var divOFElement = document.getElementById("divOFElement");
+		// create div and table for switch
+		var divTable = createDivTableForm(divOFElement, entityId, ENTITY,
+				"Openflow Switch");
+		var divSwitch = divTable.div;
+		var tableSwitch = divTable.table;
+		// create input switch id
+		var inputSwitchId = createInputForm(tableSwitch, "Switch DPID: *",
+				"dpid", entityId + "-attr",
+				"Switch DPIDs separated by 'or'; all");
+		inputSwitchId.required = "required";
+		// 		inputSwitchId.pattern = "[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}|all";
+		// create select switch component
+		var selectSwComponent = createSelectForm(tableSwitch,
+				"Switch Component: *", "openflowSwitchComponent", entityId
+						+ "-attr");
+		selectSwComponent.addEventListener("change", onSelectSwComponent, true);
+		selectSwComponent.required = "required";
+		// create options for select switch component
+		var optionsSwComponent = [ {
+			"value" : "",
+			"text" : ""
+		}, {
+			"value" : "openflowFlow",
+			"text" : "Flow"
+		}, {
+			"value" : "openflowPort",
+			"text" : "Port"
+		}, {
+			"value" : "openflowTable",
+			"text" : "Table"
+		}, {
+			"value" : "all",
+			"text" : "All"
+		}, ];
+		addOptionsToSelect(selectSwComponent, optionsSwComponent);
+		// create div for switch component
+		var divSwComponent = document.createElement("div");
+		divSwComponent.id = "divSwComponent";
+		divSwitch.appendChild(divSwComponent);
+	}
+
+	function buildOFElementLink() {
+		alert("Function to build a NMSit for Openflow Link is not implemented yet");
+	}
+
+	function buildOFElementDevice() {
+		alert("Function to build a NMSit for Openflow Device is not implemented yet");
+	}
+
+	function buildOFElementAll() {
+		alert("Function to build a NMSit for All Openflow Elements is not implemented yet");
+	}
+
+	function onSelectSwComponent(event) {
+		// remove div childs
+		removeAllElementChilds("divSwComponent");
+		// check selected switch component
+		var switchComponent = event.srcElement.value;
+		if (switchComponent == "openflowFlow") {
+			buildSwComponentFlow();
+			event.srcElement.value = "";
+		} else if (switchComponent == "openflowPort") {
+			buildSwComponentPort();
+		} else if (switchComponent == "openflowTable") {
+			buildSwComponentTable();
+			event.srcElement.value = "";
+		} else if (switchComponent == "all") {
+			buildSwComponentAll();
+			event.srcElement.value = "";
+		} else {
+			// do nothing
+		}
+	}
+
+	function buildSwComponentFlow() {
+		alert("Function to build a NMSit for Openflow Switch Flow is not implemented yet");
+	}
+
+	function buildSwComponentPort() {
+		var entityId = "openflowPort";
+		var divSwComponent = document.getElementById("divSwComponent");
+		// create div and table for port
+		var divTable = createDivTableForm(divSwComponent, entityId, ENTITY,
+				"Openflow Port");
+		var divPort = divTable.div;
+		var tablePort = divTable.table;
+		// create input port number
+		var inputPortNumber = createInputForm(tablePort, "Port Number: *",
+				"number", entityId + "-attr",
+				"Switch port numbers separated by 'or'; all");
+		inputPortNumber.required = "required";
+		// 		inputPortNumber.pattern = "[0-9]{1,5}|all";
+
+		// create percent received dropped packets
+		createInputForm(tablePort, "% Received Dropped Packets:",
+				"percentReceivedDropped", entityId + "-attr", "Ex. > 10");
+		createInputForm(tablePort, "% Transmitted Dropped Packets:",
+				"percentTransmittedDropped", entityId + "-attr", "Ex. > 10");
+		createInputForm(tablePort, "% Received Packets with Error:",
+				"percentReceivedError", entityId + "-attr", "Ex. > 10");
+		createInputForm(tablePort, "% Transmitted Packets with Error:",
+				"percentTransmittedError", entityId + "-attr", "Ex. > 10");
+
+		// create input received packets
+		createInputForm(tablePort, "Received Packets:", "receivedPackets",
+				entityId + "-attr", "Ex. > 200");
+
+		// 		// create input transmited packets
+		// 		var inputPortTxPackets = createInputForm(tablePort,
+		// 				"Transmitted Packets:", "transmittedPackets", entityId
+		// 						+ "-attr", "Ex. > 100");
+	}
+
+	function buildSwComponentTable() {
+		alert("Function to build a NMSit for Openflow Switch Table is not implemented yet");
+	}
+
+	function buildSwComponentAll() {
+		alert("Function to build a NMSit for All Openflow Switch Components is not implemented yet");
+	}
+</script>
+</head>
+<body style="font-family: Arial; border: 0 none;" onload="init();">
+
+	<h1>Network Management Situation</h1>
+	<form name="formNmsit" onsubmit="return onAddNmsit()">
+		<div id="divNmsit">
+			<table>
+				<tr>
+					<td><label>NMSit Name: *</label></td>
+					<td><input id="nmsitName" type="text" maxlength="255"
+						size="50" required="required"
+						placeholder="Name of network management situation"></td>
+				</tr>
+				<tr>
+					<td><label>NMSit Type: *</label></td>
+					<td><select id="nmsitType" onchange="onSelectNmsitType(this)"
+						required="required">
+							<option value=""></option>
+							<option value="openflow">OpenFlow</option>
+							<option value="nve">Virtualized Network</option>
+							<option value="traditional">Traditional Network</option>
+					</select></td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="divNmsitType"></div>
+
+		<div id="divButtons">
+			<button type="submit" value="addNmsit">Add NMSit</button>
+		</div>
+
+	</form>
+
+	<!-- 	<table cellspacing="10"> -->
+	<!-- Situation row -->
+	<!-- 		<tr> -->
+	<!-- 			<td><label>Situation:</label></td> -->
+	<!-- 			<td><input id="situation" type="text" /> -->
+	<!-- 				<button type="button" id="btnAddEac" onclick="onAddEac()">Add -->
+	<!-- 					EAC</button> -->
+	<!-- 				<button type="button" id="btnRmvEac" onclick="onRemoveEac()">Remove -->
+	<!-- 					Last EAC</button></td> -->
+	<!-- 		</tr> -->
+	<!-- EAC row -->
+	<!-- 		<tr> -->
+	<!-- 			<td></td> -->
+	<!-- 			<td> -->
+	<!-- 				Table for all EACs -->
+	<!-- 				<table id="tableAllEac" cellspacing="10"> -->
+	<!-- 				</table> -->
+	<!-- 			</td> -->
+	<!-- 		</tr> -->
+	<!-- Buttons to access database -->
+	<!-- 		<tr> -->
+	<!-- 			<td><button type="button" onclick="onAddNmsit()">Add -->
+	<!-- 					NMSIT</button> -->
+	<!-- 				<button type="button" onclick="onCleanAll()">Clean All</button></td> -->
+	<!-- 		</tr> -->
+	<!-- 	</table> -->
+</body>
 </html>

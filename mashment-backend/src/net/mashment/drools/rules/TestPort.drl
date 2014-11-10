@@ -5,18 +5,18 @@ package net.mashment.drools.rules
 
 //list any import classes here.
 
-import net.mashment.drools.entities.Port;
+import net.mashment.drools.entities.OFPort;
 
 //declare any global variables here
 
 
-rule "Test Port"
+rule "Test OFPort"
 
     when
         //conditions
-        $p : Port(receivePackets > 200)
+        $p : OFPort(receivedPackets > 200)
     then
         //actions
-        System.out.println("Port number " + $p.getNumber() + ", from switch " + $p.getSw().getDpid() + ", in NOS " + $p.getSw().getNos().getType() +  ", received more than 200 packets");
+        System.out.println("OFPort number " + $p.getNumber() + ", from switch " + $p.getSw().getDpid() + ", in NOS " + $p.getSw().getNos().getType() +  ", received more than 200 packets");
 
 end

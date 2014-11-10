@@ -6,7 +6,7 @@ package net.mashment.drools.entities;
 /**
  * @author festradasolano
  */
-public class NetworkOperatingSystem {
+public class OpenflowController {
 	
 	/**
 	 * 
@@ -26,7 +26,7 @@ public class NetworkOperatingSystem {
 	/**
 	 * 
 	 */
-	public NetworkOperatingSystem() {
+	public OpenflowController() {
 		super();
 	}
 	
@@ -35,7 +35,7 @@ public class NetworkOperatingSystem {
 	 * @param port
 	 * @param type
 	 */
-	public NetworkOperatingSystem(String ip, String port, String type) {
+	public OpenflowController(String ip, String port, String type) {
 		super();
 		this.ip = ip;
 		this.port = port;

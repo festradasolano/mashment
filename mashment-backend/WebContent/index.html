@@ -1,15 +1,29 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta charset="UTF-8">
 <title>Rule Creator</title>
+<style type="text/css">
+td {
+	padding: 5px;
+	padding-left: 20px;
+}
+
+div#divButtons {
+	padding: 20px;
+}
+</style>
 <script type="text/javascript">
 	// XML HTTP request
 	var AJAXrequest = createXMLHttpRequest();
 
-	var EAC_PREFIX = "eac-";
+	// 	var EAC_PREFIX = "eac-";
 
-	var AC_PREFIX = "ac-";
+	// 	var AC_PREFIX = "ac-";
+
+	var ENTITY = "entity";
+
+	var ENT_LEV_1 = "e1";
 
 	// Creates a XML HTTP request
 	function createXMLHttpRequest() {
@@ -56,7 +70,7 @@
 			alert("ERROR: Something went wrong...");
 		}
 	}
-	
+
 	function handlerLoadRules() {
 		// AJAX request status? finished and OK : finished and non-OK
 		if (AJAXrequest.readyState == 4 && AJAXrequest.status == 200) {
@@ -75,175 +89,12 @@
 </script>
 <script type="text/javascript">
 	function init() {
-		// 		init eac
-		addEac();
-		document.getElementById("btnRmvEac").disabled = true;
+		// init eac
 	}
 
-	function addEac() {
-		// get table of all eacs and check number of eacs
-		var tableAllEac = document.getElementById("tableAllEac");
-		var numberOfEacs = tableAllEac.getElementsByClassName("inputEntity").length;
-		var idEac = EAC_PREFIX + numberOfEacs;
-		// create row eac
-		var trEac = document.createElement("tr");
-		tableAllEac.appendChild(trEac);
-		// create cell eac
-		var tdEac = document.createElement("td");
-		trEac.appendChild(tdEac);
-		// create table eac
-		var tableEac = document.createElement("table");
-		tableEac.setAttribute("cellspacing", 10);
-		tdEac.appendChild(tableEac);
-		// create tbody eac
-		var tbodyEac = document.createElement("tbody");
-		tableEac.appendChild(tbodyEac);
-		// create row entity
-		var trEntity = document.createElement("tr");
-		tbodyEac.appendChild(trEntity);
-		// create cell label entity
-		var tdEntityLabel = document.createElement("td");
-		trEntity.appendChild(tdEntityLabel);
-		// create label entity
-		var labelEntity = document.createElement("label");
-		labelEntity.innerHTML = (numberOfEacs + 1) + ". Entity:";
-		tdEntityLabel.appendChild(labelEntity);
-		// create cell input and buttons for entity
-		var tdEntityInputAndButtons = document.createElement("td");
-		trEntity.appendChild(tdEntityInputAndButtons);
-		// create input entity
-		var inputEntity = document.createElement("input");
-		inputEntity.type = "text";
-		inputEntity.id = idEac;
-		inputEntity.setAttribute("class", "inputEntity");
-		tdEntityInputAndButtons.appendChild(inputEntity);
-		// create button add ac to entity
-		var buttonAddAc = document.createElement("button");
-		buttonAddAc.type = "button";
-		buttonAddAc.value = idEac;
-		buttonAddAc.addEventListener("click", onAddAc, true);
-		buttonAddAc.appendChild(document.createTextNode("Add AC"));
-		tdEntityInputAndButtons.appendChild(buttonAddAc);
-		// create button remove ac from entity
-		var buttonRemoveAc = document.createElement("button");
-		buttonRemoveAc.type = "button";
-		buttonRemoveAc.value = idEac;
-		buttonRemoveAc.disabled = true;
-		buttonRemoveAc.id = "btnRmvAc-" + idEac;
-		buttonRemoveAc.addEventListener("click", onRemoveAc, true);
-		buttonRemoveAc.appendChild(document.createTextNode("Remove Last AC"));
-		tdEntityInputAndButtons.appendChild(buttonRemoveAc);
-		// create row ac
-		var trAc = document.createElement("tr");
-		tbodyEac.appendChild(trAc);
-		// create cell empty ac
-		var tdAcLabel = document.createElement("td");
-		trAc.appendChild(tdAcLabel);
-		// create cell ac
-		var tdAc = document.createElement("td");
-		trAc.appendChild(tdAc);
-		// create table ac
-		var tableAc = document.createElement("table");
-		tableAc.setAttribute("cellspacing", 10);
-		tableAc.id = "tableAc-" + idEac;
-		tdAc.appendChild(tableAc);
-		// add ac
-		addAc(idEac);
-	}
-
-	function addAc(idEac) {
-		// get table from specified eac and check number of acs
-		var tableAc = document.getElementById("tableAc-" + idEac);
-		var numberOfAcs = tableAc.getElementsByClassName("inputAttr").length;
-		var idAc = idEac + AC_PREFIX + numberOfAcs;
-		// create row ac
-		var trAc = document.createElement("tr");
-		tableAc.appendChild(trAc);
-		// create cell ac
-		var tdAc = document.createElement("td");
-		trAc.appendChild(tdAc);
-		// create label attribute
-		var labelAttr = document.createElement("label");
-		labelAttr.innerHTML = (numberOfAcs + 1) + ". Attribute:&nbsp;";
-		tdAc.appendChild(labelAttr);
-		// create input attribute
-		var inputAttr = document.createElement("input");
-		inputAttr.type = "text";
-		inputAttr.id = "attr-" + idAc;
-		inputAttr.setAttribute("class", "inputAttr");
-		tdAc.appendChild(inputAttr);
-		// create label constraint
-		var labelCons = document.createElement("label");
-		labelCons.innerHTML = "&nbsp;&nbsp;-&nbsp;&nbsp;Constraint:&nbsp;";
-		tdAc.appendChild(labelCons);
-		// create input constraint
-		var inputCons = document.createElement("input");
-		inputCons.type = "text";
-		inputCons.id = "cons-" + idAc;
-		inputCons.setAttribute("class", "inputCons");
-		tdAc.appendChild(inputCons);
-	}
-
-	function buildEacArray() {
-		var eacArray = [];
-		// get number of eacs
-		var numberOfEacs = document.getElementById("tableAllEac")
-				.getElementsByClassName("inputEntity").length;
-		// walk through entities by id
-		for (var i = 0; i < numberOfEacs; i++) {
-			var idEac = EAC_PREFIX + i;
-			var entity = document.getElementById(idEac);
-			// if entity value is empty, alert
-			if (entity.value.trim() == "") {
-				alert("ERROR: Field 'Entity' " + (i + 1) + " is empty!");
-				return null;
-			}
-			var acArray = []
-			// get number of acs from this eac
-			var numberOfAcs = document.getElementById("tableAc-" + idEac)
-					.getElementsByClassName("inputAttr").length;
-			// walk through attributes and constraints from specified eac by id
-			for (var j = 0; j < numberOfAcs; j++) {
-				var idAc = idEac + AC_PREFIX + j;
-				var attr = document.getElementById("attr-" + idAc);
-				var cons = document.getElementById("cons-" + idAc);
-				// if attribute or constraint value is empty, alert
-				if (attr.value.trim() == "" || cons.value.trim() == "") {
-					alert("ERROR: Field 'Attribute' or 'Constraint' " + (j + 1)
-							+ " from 'Entity' " + (i + 1) + " is empty!");
-					return null;
-				}
-				// build ac and push to the array
-				var ac = {
-					"ATTRIBUTE" : attr.value.trim(),
-					"CONSTRAINT" : cons.value.trim()
-				}
-				acArray.push(ac);
-			}
-			// build eac and push to the array
-			var eac = {
-				"ENTITY" : entity.value.trim(),
-				"PROPERTY" : acArray
-			}
-			eacArray.push(eac);
-		}
-		return eacArray;
-	}
-	
 	function cleanFields() {
-		var situation = document.getElementById("situation").value = "";
-		var entities = document.getElementsByClassName("inputEntity");
-		for (var i = 0; i < entities.length; i++) {
-			entities[i].value = "";
-		}
-		var attributes = document.getElementsByClassName("inputAttr");
-		for (var i = 0; i < attributes.length; i++) {
-			attributes[i].value = "";
-		}
-		var constraints = document.getElementsByClassName("inputCons");
-		for (var i = 0; i < constraints.length; i++) {
-			constraints[i].value = "";
-		}
+		// reload page
+		location.reload();
 	}
 
 	function loadRules() {
@@ -252,46 +103,46 @@
 			"method" : "loadRules",
 		}
 		// ask to load rules
-// 		AJAXrequest.open("GET",
-// 				"ruleLoader.jsp?params=" + JSON.stringify(params), true);
-// 		AJAXrequest.onreadystatechange = handlerLoadRules;
-// 		AJAXrequest.send();
-	}
-
-	function onAddAc(event) {
-		// get eac id from button event
-		var idEac = event.srcElement.value;
-		// add ac to specified eac
-		addAc(idEac);
-		// enable button that removes ac from specified eac
-		document.getElementById("btnRmvAc-" + idEac).disabled = false;
-	}
-
-	function onAddEac() {
-		// add eac
-		addEac();
-		// enable button that removes eac
-		document.getElementById("btnRmvEac").disabled = false;
+		AJAXrequest.open("GET", "ruleLoader.jsp?params="
+				+ JSON.stringify(params), true);
+		AJAXrequest.onreadystatechange = handlerLoadRules;
+		AJAXrequest.send();
 	}
 
 	function onAddNmsit() {
-		// get situation; if empty, alert
-		var situation = document.getElementById("situation").value.trim();
-		if (situation == "") {
-			alert("ERROR: Field 'Situation' is empty!");
-			return;
-		}
-		// build eac; if null, do nothing
-		var eac = buildEacArray();
-		if (eac == null) {
-			return;
+		// get situation name
+		var situation = document.getElementById("nmsitName").value;
+		var eacArray = [];
+		// get entities
+		var entities = document.getElementsByClassName(ENTITY);
+		for (var i = 0; i < entities.length; i++) {
+			var acArray = [];
+			// get attributes from entity
+			var attributes = entities[i].getElementsByClassName(entities[i].id
+					+ "-attr");
+			for (var j = 0; j < attributes.length; j++) {
+				// check if attribute is not empty
+				if (attributes[j].value.trim() != "") {
+					// build ac
+					var ac = {
+						"ATTRIBUTE" : attributes[j].id,
+						"CONSTRAINT" : attributes[j].value.trim()
+					}
+					acArray.push(ac);
+				}
+			}
+			// build eac
+			var eac = {
+				"ENTITY" : entities[i].id,
+				"PROPERTY" : acArray
+			}
+			eacArray.push(eac);
 		}
 		// build nmsit
 		var nmsit = {
 			"SITUATION" : situation,
-			"EAC" : eac
+			"EAC" : eacArray
 		};
-		console.log(JSON.stringify(nmsit))
 		// build params
 		var params = {
 			"method" : "addNmsit",
@@ -302,61 +153,412 @@
 				"nmsitDao.jsp?params=" + JSON.stringify(params), true);
 		AJAXrequest.onreadystatechange = handlerAddNmsit;
 		AJAXrequest.send();
-	}
-	
-	function onCleanAll() {
-		cleanFields();
+		// prevent page refresh
+		return false;
 	}
 
-	function onRemoveAc(event) {
-		// get eac id from button event
-		var idEac = event.srcElement.value;
-		// remove last ac from specified eac table
-		var tableAc = document.getElementById("tableAc-" + idEac);
-		tableAc.removeChild(tableAc.lastChild);
-		// if number of acs in eac is less than 2, disable button that removes ac
-		if (tableAc.getElementsByClassName("inputAttr").length < 2) {
-			document.getElementById("btnRmvAc-" + idEac).disabled = true;
+	function createDivTableForm(parent, divId, divClass, title) {
+		// create div
+		var div = document.createElement("div");
+		div.style.paddingLeft = "20px";
+		div.id = divId;
+		div.setAttribute("class", divClass);
+		parent.appendChild(div);
+		// create title
+		var h3Title = document.createElement("h3");
+		h3Title.innerHTML = title;
+		div.appendChild(h3Title);
+		// create table
+		var table = document.createElement("table");
+		div.appendChild(table);
+		// return div and table
+		return {
+			"div" : div,
+			"table" : table
+		};
+	}
+
+	function createRowForm(table, labelText) {
+		// create row
+		var row = document.createElement("tr");
+		table.appendChild(row);
+		// create cell for label
+		var cellLabel = document.createElement("td");
+		row.appendChild(cellLabel);
+		// create label
+		var label = document.createElement("label");
+		label.innerHTML = labelText;
+		cellLabel.appendChild(label);
+		// return row
+		return row;
+	}
+
+	function createInputForm(table, labelText, inputId, inputClass,
+			inputPlaceholder) {
+		// create row
+		var row = createRowForm(table, labelText);
+		// create cell for input
+		var cellInput = document.createElement("td");
+		row.appendChild(cellInput);
+		// create input
+		var input = document.createElement("input");
+		input.id = inputId;
+		input.setAttribute("class", inputClass);
+		input.type = "text";
+		input.maxLength = "255";
+		input.size = "50";
+		input.placeholder = inputPlaceholder;
+		cellInput.appendChild(input);
+		return input;
+	}
+
+	function createSelectForm(table, labelText, selectId, selectClass) {
+		// create row
+		var row = createRowForm(table, labelText);
+		// create cell for select
+		var cellSelect = document.createElement("td");
+		row.appendChild(cellSelect);
+		// create select
+		var select = document.createElement("select");
+		select.id = selectId;
+		select.setAttribute("class", selectClass);
+		cellSelect.appendChild(select);
+		// return select
+		return select;
+	}
+
+	function addOptionsToSelect(select, options) {
+		// walk through options
+		for (var i = 0; i < options.length; i++) {
+			// create option
+			var option = document.createElement("option");
+			option.value = options[i].value;
+			option.innerHTML = options[i].text;
+			// default is null
+			if (options[i].value == "null") {
+				option.selected = "selected";
+			}
+			select.appendChild(option);
 		}
 	}
-	
-	function onRemoveEac() {
-		// remove last eac from table of all eacs
-		var tableAllEac = document.getElementById("tableAllEac");
-		tableAllEac.removeChild(tableAllEac.lastChild);
-		// if number of eacs is less than 2, disable button that removes eac
-		if (tableAllEac.getElementsByClassName("inputEntity").length < 2) {
-			document.getElementById("btnRmvEac").disabled = true;
+
+	function removeAllElementChilds(idElement) {
+		// check if element has childs to remove them
+		var element = document.getElementById(idElement);
+		while (element.firstElementChild != null) {
+			element.removeChild(element.firstElementChild);
 		}
+	}
+
+	function onSelectNmsitType(nmsitType) {
+		// remove div childs
+		removeAllElementChilds("divNmsitType");
+		// check selected nmsit type
+		if (nmsitType.value == "openflow") {
+			buildNmsitTypeOpenflow();
+		} else if (nmsitType.value == "nve") {
+			buildNmsitTypeNve();
+			nmsitType.value = "";
+		} else if (nmsitType.value == "traditional") {
+			buildNmsitTypeTraditional();
+			nmsitType.value = "";
+		} else {
+			// do nothing
+		}
+	}
+
+	function buildNmsitTypeOpenflow() {
+		var entityId = "openflowController";
+		var divNmsitType = document.getElementById("divNmsitType");
+		// create div and table for controller
+		var divTable = createDivTableForm(divNmsitType, entityId, ENTITY,
+				"Openflow Controller");
+		var divController = divTable.div;
+		var tableController = divTable.table;
+		// create input controller ip
+		var inputControllerIp = createInputForm(tableController,
+				"Controller IP: *", "ip", entityId + "-attr",
+				"IP addresses separated by 'or'; all");
+		inputControllerIp.required = "required";
+		// 		inputControllerIp.pattern = "[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}|all";
+		// create input controller port
+		var inputControllerPort = createInputForm(tableController,
+				"Controller Port: *", "port", entityId + "-attr",
+				"Port numbers separated by 'or'; or all");
+		inputControllerPort.required = "required";
+		// 		inputControllerPort.pattern = "[0-9]{1,5}|all";
+		// create select controller type
+		var selectControllerType = createSelectForm(tableController,
+				"Controller Type: *", "type", entityId + "-attr");
+		selectControllerType.required = "required";
+		// create options for select controller type
+		var optionsControllerType = [ {
+			"value" : "",
+			"text" : ""
+		}, {
+			"value" : "beacon",
+			"text" : "Beacon"
+		}, {
+			"value" : "pox",
+			"text" : "POX"
+		}, {
+			"value" : "floodlight",
+			"text" : "Floodlight"
+		}, {
+			"value" : "all",
+			"text" : "All"
+		}, {
+			"value" : "beacon or pox",
+			"text" : "Beacon or POX"
+		}, {
+			"value" : "beacon or floodlight",
+			"text" : "Beacon or Floodlight"
+		}, {
+			"value" : "pox or floodlight",
+			"text" : "POX or Floodlight"
+		}, ];
+		addOptionsToSelect(selectControllerType, optionsControllerType);
+		// create select openflow element
+		var selectOFElement = createSelectForm(tableController,
+				"OpenFlow Element: *", "openflowElement", entityId + "-attr");
+		selectOFElement.addEventListener("change", onSelectOFElement, true);
+		selectOFElement.required = "required";
+		// create options for select openflow element
+		var optionsOFElement = [ {
+			"value" : "",
+			"text" : ""
+		}, {
+			"value" : "openflowSwitch",
+			"text" : "Switch"
+		}, {
+			"value" : "openflowLink",
+			"text" : "Link"
+		}, {
+			"value" : "openflowDevice",
+			"text" : "Device"
+		}, {
+			"value" : "all",
+			"text" : "All"
+		}, ];
+		addOptionsToSelect(selectOFElement, optionsOFElement);
+		// create div for openflow element
+		var divOFElement = document.createElement("div");
+		divOFElement.id = "divOFElement";
+		divController.appendChild(divOFElement);
+	}
+
+	function buildNmsitTypeNve() {
+		alert("Function to build a NMSit for Virtualized Network is not implemented yet");
+	}
+
+	function buildNmsitTypeTraditional() {
+		alert("Function to build a NMSit for Traditional Network is not implemented yet");
+	}
+
+	function onSelectOFElement(event) {
+		// remove div childs
+		removeAllElementChilds("divOFElement");
+		// check selected openflow element
+		var openflowElement = event.srcElement.value;
+		if (openflowElement == "openflowSwitch") {
+			buildOFElementSwitch();
+		} else if (openflowElement == "openflowLink") {
+			buildOFElementLink();
+			event.srcElement.value = "";
+		} else if (openflowElement == "openflowDevice") {
+			buildOFElementDevice();
+			event.srcElement.value = "";
+		} else if (openflowElement == "all") {
+			buildOFElementAll();
+			event.srcElement.value = "";
+		} else {
+			// do nothing
+		}
+	}
+
+	function buildOFElementSwitch() {
+		var entityId = "openflowSwitch";
+		var divOFElement = document.getElementById("divOFElement");
+		// create div and table for switch
+		var divTable = createDivTableForm(divOFElement, entityId, ENTITY,
+				"Openflow Switch");
+		var divSwitch = divTable.div;
+		var tableSwitch = divTable.table;
+		// create input switch id
+		var inputSwitchId = createInputForm(tableSwitch, "Switch DPID: *",
+				"dpid", entityId + "-attr",
+				"Switch DPIDs separated by 'or'; all");
+		inputSwitchId.required = "required";
+		// 		inputSwitchId.pattern = "[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}:[A-Fa-f0-9]{1,2}|all";
+		// create select switch component
+		var selectSwComponent = createSelectForm(tableSwitch,
+				"Switch Component: *", "openflowSwitchComponent", entityId
+						+ "-attr");
+		selectSwComponent.addEventListener("change", onSelectSwComponent, true);
+		selectSwComponent.required = "required";
+		// create options for select switch component
+		var optionsSwComponent = [ {
+			"value" : "",
+			"text" : ""
+		}, {
+			"value" : "openflowFlow",
+			"text" : "Flow"
+		}, {
+			"value" : "openflowPort",
+			"text" : "Port"
+		}, {
+			"value" : "openflowTable",
+			"text" : "Table"
+		}, {
+			"value" : "all",
+			"text" : "All"
+		}, ];
+		addOptionsToSelect(selectSwComponent, optionsSwComponent);
+		// create div for switch component
+		var divSwComponent = document.createElement("div");
+		divSwComponent.id = "divSwComponent";
+		divSwitch.appendChild(divSwComponent);
+	}
+
+	function buildOFElementLink() {
+		alert("Function to build a NMSit for Openflow Link is not implemented yet");
+	}
+
+	function buildOFElementDevice() {
+		alert("Function to build a NMSit for Openflow Device is not implemented yet");
+	}
+
+	function buildOFElementAll() {
+		alert("Function to build a NMSit for All Openflow Elements is not implemented yet");
+	}
+
+	function onSelectSwComponent(event) {
+		// remove div childs
+		removeAllElementChilds("divSwComponent");
+		// check selected switch component
+		var switchComponent = event.srcElement.value;
+		if (switchComponent == "openflowFlow") {
+			buildSwComponentFlow();
+			event.srcElement.value = "";
+		} else if (switchComponent == "openflowPort") {
+			buildSwComponentPort();
+		} else if (switchComponent == "openflowTable") {
+			buildSwComponentTable();
+			event.srcElement.value = "";
+		} else if (switchComponent == "all") {
+			buildSwComponentAll();
+			event.srcElement.value = "";
+		} else {
+			// do nothing
+		}
+	}
+
+	function buildSwComponentFlow() {
+		alert("Function to build a NMSit for Openflow Switch Flow is not implemented yet");
+	}
+
+	function buildSwComponentPort() {
+		var entityId = "openflowPort";
+		var divSwComponent = document.getElementById("divSwComponent");
+		// create div and table for port
+		var divTable = createDivTableForm(divSwComponent, entityId, ENTITY,
+				"Openflow Port");
+		var divPort = divTable.div;
+		var tablePort = divTable.table;
+		// create input port number
+		var inputPortNumber = createInputForm(tablePort, "Port Number: *",
+				"number", entityId + "-attr",
+				"Switch port numbers separated by 'or'; all");
+		inputPortNumber.required = "required";
+		// 		inputPortNumber.pattern = "[0-9]{1,5}|all";
+
+		// create percent received dropped packets
+		createInputForm(tablePort, "% Received Dropped Packets:",
+				"percentReceivedDropped", entityId + "-attr", "Ex. > 10");
+		createInputForm(tablePort, "% Transmitted Dropped Packets:",
+				"percentTransmittedDropped", entityId + "-attr", "Ex. > 10");
+		createInputForm(tablePort, "% Received Packets with Error:",
+				"percentReceivedError", entityId + "-attr", "Ex. > 10");
+		createInputForm(tablePort, "% Transmitted Packets with Error:",
+				"percentTransmittedError", entityId + "-attr", "Ex. > 10");
+
+		// create input received packets
+		createInputForm(tablePort, "Received Packets:", "receivedPackets",
+				entityId + "-attr", "Ex. > 200");
+
+		// 		// create input transmited packets
+		// 		var inputPortTxPackets = createInputForm(tablePort,
+		// 				"Transmitted Packets:", "transmittedPackets", entityId
+		// 						+ "-attr", "Ex. > 100");
+	}
+
+	function buildSwComponentTable() {
+		alert("Function to build a NMSit for Openflow Switch Table is not implemented yet");
+	}
+
+	function buildSwComponentAll() {
+		alert("Function to build a NMSit for All Openflow Switch Components is not implemented yet");
 	}
 </script>
 </head>
 <body style="font-family: Arial; border: 0 none;" onload="init();">
-	<table cellspacing="10">
-		<!-- Situation row -->
-		<tr>
-			<td><label>Situation:</label></td>
-			<td><input id="situation" type="text" />
-				<button type="button" id="btnAddEac" onclick="onAddEac()">Add
-					EAC</button>
-				<button type="button" id="btnRmvEac" onclick="onRemoveEac()">Remove
-					Last EAC</button></td>
-		</tr>
-		<!-- EAC row -->
-		<tr>
-			<td></td>
-			<td>
-				<!-- Table for all EACs -->
-				<table id="tableAllEac" cellspacing="10">
-				</table>
-			</td>
-		</tr>
-		<!-- Buttons to access database -->
-		<tr>
-			<td><button type="button" onclick="onAddNmsit()">Add
-					NMSIT</button>
-				<button type="button" onclick="onCleanAll()">Clean All</button></td>
-		</tr>
-	</table>
+
+	<h1>Network Management Situation</h1>
+	<form name="formNmsit" onsubmit="return onAddNmsit()">
+		<div id="divNmsit">
+			<table>
+				<tr>
+					<td><label>NMSit Name: *</label></td>
+					<td><input id="nmsitName" type="text" maxlength="255"
+						size="50" required="required"
+						placeholder="Name of network management situation"></td>
+				</tr>
+				<tr>
+					<td><label>NMSit Type: *</label></td>
+					<td><select id="nmsitType" onchange="onSelectNmsitType(this)"
+						required="required">
+							<option value=""></option>
+							<option value="openflow">OpenFlow</option>
+							<option value="nve">Virtualized Network</option>
+							<option value="traditional">Traditional Network</option>
+					</select></td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="divNmsitType"></div>
+
+		<div id="divButtons">
+			<button type="submit" value="addNmsit">Add NMSit</button>
+		</div>
+
+	</form>
+
+	<!-- 	<table cellspacing="10"> -->
+	<!-- Situation row -->
+	<!-- 		<tr> -->
+	<!-- 			<td><label>Situation:</label></td> -->
+	<!-- 			<td><input id="situation" type="text" /> -->
+	<!-- 				<button type="button" id="btnAddEac" onclick="onAddEac()">Add -->
+	<!-- 					EAC</button> -->
+	<!-- 				<button type="button" id="btnRmvEac" onclick="onRemoveEac()">Remove -->
+	<!-- 					Last EAC</button></td> -->
+	<!-- 		</tr> -->
+	<!-- EAC row -->
+	<!-- 		<tr> -->
+	<!-- 			<td></td> -->
+	<!-- 			<td> -->
+	<!-- 				Table for all EACs -->
+	<!-- 				<table id="tableAllEac" cellspacing="10"> -->
+	<!-- 				</table> -->
+	<!-- 			</td> -->
+	<!-- 		</tr> -->
+	<!-- Buttons to access database -->
+	<!-- 		<tr> -->
+	<!-- 			<td><button type="button" onclick="onAddNmsit()">Add -->
+	<!-- 					NMSIT</button> -->
+	<!-- 				<button type="button" onclick="onCleanAll()">Clean All</button></td> -->
+	<!-- 		</tr> -->
+	<!-- 	</table> -->
 </body>
 </html>

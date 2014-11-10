@@ -94,8 +94,9 @@ public class NmsitDao {
 		try {
 			// execute SQL query to delete nmsit by situation
 			Statement statement = connection.createStatement();
-			statement.executeQuery("DELETE FROM nmsit WHERE situation = \'"
-					+ situation + "\'");
+			statement
+					.executeQuery("DELETE FROM nmsit WHERE situation = LOWER('"
+							+ situation + "');");
 			connection.close();
 			return true;
 		} catch (SQLException e) {
@@ -144,8 +145,8 @@ public class NmsitDao {
 			// execute SQL query to get nmsit by situation
 			Statement statement = connection.createStatement();
 			ResultSet result = statement
-					.executeQuery("SELECT * FROM nmsit WHERE situation = '"
-							+ situation + "';");
+					.executeQuery("SELECT * FROM nmsit WHERE situation = LOWER('"
+							+ situation + "');");
 			// if nmsit exists, build response
 			JSONObject jsonNmsit = null;
 			if (result.next()) {
